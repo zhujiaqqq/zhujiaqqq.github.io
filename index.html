@@ -252,6 +252,170 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/11/OOM是什么？什么情况导致OOM？有什么解决方法可以避免OOM？/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zhujiaqqq">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zhujiaqqq Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/11/OOM是什么？什么情况导致OOM？有什么解决方法可以避免OOM？/" itemprop="url">OOM是什么？什么情况导致OOM？有什么解决方法可以避免OOM？</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-11T22:18:29+08:00">
+                2019-04-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <ul>
+<li><p>OOM是Java 异常，java.lang.OutOfMemoryError</p>
+</li>
+<li><p>导致OOM的原因：</p>
+<ul>
+<li>加载大图片导致内存溢出</li>
+<li>大量的内存泄漏</li>
+</ul>
+</li>
+<li><p>解决方法：</p>
+<ul>
+<li>使用更轻量的数据结构</li>
+<li>避免在Android里面使用Enum</li>
+<li>减少Bitmap对象的内存占用：缩放比例、解码格式</li>
+<li>使用更小的图片</li>
+<li>复用系统自带的资源</li>
+<li>ListView、GridView中对ConvertView的复用，ViewHolder内部类使用</li>
+<li>避免onDraw方法中执行对象的创建</li>
+<li>用StringBuilder进行拼接</li>
+<li>注意Activity的泄漏：内部类引用导致Activity泄漏、Activity的Context被传递到其他实例中，可能导致自身被引用而发生泄漏。</li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/08/ANR定位和修正/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -743,7 +907,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -765,7 +929,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
