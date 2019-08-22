@@ -252,6 +252,184 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/22/Activity的启动流程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zhujiaqqq">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zhujiaqqq Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/08/22/Activity的启动流程/" itemprop="url">Activity的启动流程</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-22T22:29:45+08:00">
+                2019-08-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="Activity跨进程启动"><a href="#Activity跨进程启动" class="headerlink" title="Activity跨进程启动"></a>Activity跨进程启动</h4><ol>
+<li>请求进程A通过startActivity方法调用AMP</li>
+<li>system_server进程中的AMS执行：<ol>
+<li>解析Activity信息（androidManifest.xml）</li>
+<li>处理启动参数</li>
+<li>启动目标进程</li>
+<li>绑定新进程</li>
+<li>调用ATP（ApplicationThread代理）</li>
+</ol>
+</li>
+<li>目标进程B通过ApplicationThread调用ActivityThread，最终启动Activity的生命周期</li>
+</ol>
+<blockquote>
+<p>AMP -&gt; AMS 以及 ATP -&gt; ApplicationThread都是通过binder进行通信的</p>
+</blockquote>
+<h4 id="Activity进程内启动"><a href="#Activity进程内启动" class="headerlink" title="Activity进程内启动"></a>Activity进程内启动</h4><ol>
+<li>请求进程A通过startActivity方法调用AMP</li>
+<li>system_server进程中的AMS执行：<ol>
+<li>解析Activity信息（androidManifest.xml）</li>
+<li>处理启动参数</li>
+<li>调用ATP（ApplicationThread代理）</li>
+</ol>
+</li>
+<li>进程A过ApplicationThread调用ActivityThread，最终启动Activity的生命周期</li>
+</ol>
+<h4 id="Activity的参数传递"><a href="#Activity的参数传递" class="headerlink" title="Activity的参数传递"></a>Activity的参数传递</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">请求进程A的Bundle -- Binder缓冲区  --&gt; system_server进程的Bundle</span><br></pre></td></tr></table></figure>
+<ul>
+<li>大小受缓冲区大小限制</li>
+<li>数据必须可以序列化</li>
+</ul>
+<p>解决办法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">ActivityA的Bundle -- Binder缓冲区-key --&gt; ActivityB的Bundle</span><br><span class="line">ActivityA的Bundle -- setData --&gt; Model-data</span><br><span class="line">Model-data -- getData --&gt; ActivityB的Bundle</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Activity之间的数据传递不能太大</p>
+</blockquote>
+<h4 id="Activity实例化"><a href="#Activity实例化" class="headerlink" title="Activity实例化"></a>Activity实例化</h4><p>通过反射newInstance实现，所以不能对Activity添加构造方法。</p>
+<p>同理，fragment也一样。</p>
+<h4 id="Activity的窗口如何展示"><a href="#Activity的窗口如何展示" class="headerlink" title="Activity的窗口如何展示"></a>Activity的窗口如何展示</h4><h4 id="Activity转场动画的实现机制"><a href="#Activity转场动画的实现机制" class="headerlink" title="Activity转场动画的实现机制"></a>Activity转场动画的实现机制</h4>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/21/Java Native方法与Native函数怎么绑定的/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1717,180 +1895,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/25/RxJava/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Zhujiaqqq">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zhujiaqqq Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/06/25/RxJava/" itemprop="url">RxJava</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-25T15:11:12+08:00">
-                2019-06-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="Flowable-Onservable"><a href="#Flowable-Onservable" class="headerlink" title="Flowable / Onservable"></a>Flowable / Onservable</h3><ul>
-<li><p>Flowable实现了Publisher接口（需要实现subscribe(Subscriber&lt;? Super T&gt; s)方法）</p>
-</li>
-<li><p>Observable实现了ObservableSource接口（需要实现subcribe(Observer&lt;? Super T&gt; observer)方法）</p>
-</li>
-</ul>
-<blockquote>
-<p>Flowable和Observable都需要实现subscribe（）方法，但是入参不同。</p>
-</blockquote>
-<h3 id="几个类的区分："><a href="#几个类的区分：" class="headerlink" title="几个类的区分："></a>几个类的区分：</h3><ul>
-<li>ObservableSource 可观察源</li>
-<li>Observer                 观察者</li>
-</ul>
-<blockquote>
-<p><strong>报刊（ObservableSource）、报刊订阅者（Observer）、订阅报刊的行为（subscribe)</strong></p>
-</blockquote>
-<ul>
-<li>Publisher                 发布者</li>
-<li>Subscriber               订阅者</li>
-</ul>
-<blockquote>
-<p><strong>报刊发布人(Publisher)、报刊订阅者（Subscriber）、订阅报刊的行为（subscribe)</strong></p>
-</blockquote>
-<ul>
-<li>subscribe()               订阅</li>
-</ul>
-<h3 id="Single-Completable-Maybe"><a href="#Single-Completable-Maybe" class="headerlink" title="Single\Completable\Maybe"></a>Single\Completable\Maybe</h3><p>Single、Completable、Maybe是简化的Observable，只是具有少部分功能</p>
-<ul>
-<li>Single：只能发射一条单一数据或者一条异常通知，不能发射完成通知，数据与通知只能发射一个，二选一。</li>
-<li>Completable：只能发射一条完成通知或者一条异常通知，不能发射数据，要么发射完成通知要么发射异常通，二选一。</li>
-<li>Maybe：只能发射一条单一数据，和发射一条完成通知，或者一条异常通知，完成通知和异常通知二选一，只能在发射完成通知或异常通知之前发射数据，否则发射数据无效</li>
-</ul>
-<h3 id="五种观察者模式与被观察者关系："><a href="#五种观察者模式与被观察者关系：" class="headerlink" title="五种观察者模式与被观察者关系："></a>五种观察者模式与被观察者关系：</h3><table>
-<thead>
-<tr>
-<th style="text-align:center">被观察者</th>
-<th style="text-align:left">Observable</th>
-<th style="text-align:center">Flowable</th>
-<th style="text-align:left">Single</th>
-<th style="text-align:left">Completable</th>
-<th style="text-align:left">Maybe</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">观察者</td>
-<td style="text-align:left">Observer</td>
-<td style="text-align:center">Subscriber</td>
-<td style="text-align:left">SingleObserver</td>
-<td style="text-align:left">CompletableObserver</td>
-<td style="text-align:left">MaybeObserver</td>
-</tr>
-</tbody>
-</table>
-<p>Hot Observable 和 Cold Observable</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1941,7 +1945,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-count">24</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1963,7 +1967,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">29</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
