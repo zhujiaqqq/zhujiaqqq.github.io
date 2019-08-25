@@ -252,6 +252,341 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/25/如何实现类似微信右滑返回的效果/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zhujiaqqq">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zhujiaqqq Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/08/25/如何实现类似微信右滑返回的效果/" itemprop="url">如何实现类似微信右滑返回的效果</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-25T16:14:43+08:00">
+                2019-08-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Activity/" itemprop="url" rel="index">
+                    <span itemprop="name">Activity</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="Fragment的实现"><a href="#Fragment的实现" class="headerlink" title="Fragment的实现"></a>Fragment的实现</h4><ul>
+<li>对于Fragment的控制相对简单</li>
+<li>不涉及window的控制，只是View级别的操作</li>
+<li>实现View跟随手势滑动移动的效果</li>
+<li>实现手势结束后判断取消或返回执行归位动画</li>
+</ul>
+<h4 id="Activity的实现"><a href="#Activity的实现" class="headerlink" title="Activity的实现"></a>Activity的实现</h4><ul>
+<li><p>处理好window的控制</p>
+<ul>
+<li><p>修改activity的style属性：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span> <span class="attr">name</span>=<span class="string">"AppTranslucentTheme"</span> <span class="attr">parent</span>=<span class="string">"AppTheme"</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="xml">	<span class="tag">&lt;<span class="name">item</span> <span class="attr">name</span>=<span class="string">"android:windowBackground"</span>&gt;</span>@android:color/transparent<span class="tag">&lt;/<span class="name">item</span>&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">item</span> <span class="attr">name</span>=<span class="string">"android:windowIsTranslucent"</span>&gt;</span>true<span class="tag">&lt;/<span class="name">item</span>&gt;</span></span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>Activity联动（多个activity栈）</p>
+<blockquote>
+<p>Activity A和Activity C在Task#0</p>
+</blockquote>
+<p>  Activity B在Task#1</p>
+<p>  当Activity A跳转Activity B时没有问题（有动画效果）</p>
+<p>  再当Activity B跳转Activity C时，会先出现Activity A，然后动画效果到Activity C</p>
+<p>处理方法：再Activity B跳转Activity C的时候将B页面整体截屏放到Activity C的下面。</p>
+<p>获取Activity的栈：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Activity.java</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getTaskId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> ActivityManager.getService()</span><br><span class="line">            .getTaskForActivity(mToken, <span class="keyword">false</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="Activity透明对生命周期的影响"><a href="#Activity透明对生命周期的影响" class="headerlink" title="Activity透明对生命周期的影响"></a>Activity透明对生命周期的影响</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">graph TB</span><br><span class="line">Created -- onStart --&gt; Started</span><br><span class="line">Started -- onResume --&gt; Resumed</span><br><span class="line">Resumed -- onPause --&gt;Started</span><br><span class="line">Started -- onStop --&gt; Created</span><br></pre></td></tr></table></figure>
+<p>A、B、C、D四个Activity依次跳转，此时Activity栈中：A-&gt;B-&gt;C-&gt;D。（默认都不透明）</p>
+<ul>
+<li>如果D为不透明Activity，那么：D为Resumed状态（可操作），ABC为Created状态（不可见）。</li>
+<li>如果D为透明Activity，那么：D为Resumed状态（可操作），C为Started状态（可见，不可操作），AB为Created状态（不可见）</li>
+<li>如果C、D为透明Activity，那么：：D为Resumed状态（可操作），B、C为Started状态（可见，不可操作），A为Created状态（不可见）</li>
+</ul>
+<h4 id="实现滑动返回接口"><a href="#实现滑动返回接口" class="headerlink" title="实现滑动返回接口"></a>实现滑动返回接口</h4>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/25/如何在代码的任意位置为当前Activity添加View/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zhujiaqqq">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zhujiaqqq Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/08/25/如何在代码的任意位置为当前Activity添加View/" itemprop="url">如何在代码的任意位置为当前Activity添加View</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-25T15:34:59+08:00">
+                2019-08-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="获取当前Activity"><a href="#获取当前Activity" class="headerlink" title="获取当前Activity"></a>获取当前Activity</h4><p>使用ActivityLifecycleCallbacks回调获取create的Activity对象</p>
+<h4 id="添加View"><a href="#添加View" class="headerlink" title="添加View"></a>添加View</h4><p>使用<code>Activity.addContentView(View view, ViewGroup.LayoutParams params)</code></p>
+<p>移除View：<code>Activity.removeContentView(View view)</code></p>
+<p>将Content获取，在Content中手动添加View：</p>
+<blockquote>
+<p>Content view 的ID为：<code>android:id/content</code></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ActivityExt</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Activity mActivity;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ViewGroup mViewGroup;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ActivityExt</span><span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">        mActivity = activity;</span><br><span class="line">        mViewGroup = activity.findViewById(android.R.id.content);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addContentView</span><span class="params">(View view, ViewGroup.LayoutParams params)</span> </span>&#123;</span><br><span class="line">        mViewGroup.addView(view, params);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">removeContentView</span><span class="params">(View view)</span> </span>&#123;</span><br><span class="line">        mViewGroup.removeView(view);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="在整个屏幕中添加View"><a href="#在整个屏幕中添加View" class="headerlink" title="在整个屏幕中添加View"></a>在整个屏幕中添加View</h4><p>上面说的addContentView是在Content中添加View，有一定的局限性，如果想在整个屏幕中添加View，不如说水印、护眼壁纸等，就需要将content上面的actionBar、stateBar也添加View。</p>
+<p>整个屏幕中能看见的部分都来自一个总的view——<code>DecorView</code></p>
+<ul>
+<li>获取DecorView：<code>FrameLayout decorView = (FrameLayout) getWindow().getDecorView();</code></li>
+<li>DecorView是一个FrameLayout，在里面直接<code>addView(View view, ViewGroup.LayoutParams params)</code>就可以添加View。</li>
+</ul>
+<blockquote>
+<p>添加的View在整个FrameLayout布局的最上层，覆盖在Content的上面。如果添加的View有事件拦截的话，正常显示的Activity将无法获取事件消息。</p>
+</blockquote>
+<h4 id="添加View的需求评估"><a href="#添加View的需求评估" class="headerlink" title="添加View的需求评估"></a>添加View的需求评估</h4><p>一般情况下，在Activity中手动添加View都是对整个app的页面统一添加，所以在需求评估时候需要确认使用场景，给出合理的方案，大型的app页面众多，不同的开发者为实现不同的效果，可能会对页面做不同的修改，全局添加的view在部分页面会出现崩溃。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/24/如何解决Activity参数的类型安全及接口繁琐的问题/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1623,327 +1958,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/17/CPU架构适配需要注意哪些问题/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Zhujiaqqq">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zhujiaqqq Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/08/17/CPU架构适配需要注意哪些问题/" itemprop="url">CPU架构适配需要注意哪些问题</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-17T20:48:05+08:00">
-                2019-08-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="CPU架构的指令兼容性"><a href="#CPU架构的指令兼容性" class="headerlink" title="CPU架构的指令兼容性"></a>CPU架构的指令兼容性</h3><ul>
-<li><p>mips（已被废弃）</p>
-<ul>
-<li>mips64</li>
-</ul>
-</li>
-<li><p>armeabi</p>
-<ul>
-<li>armeabi-v7a<ul>
-<li>arm64-v8a</li>
-</ul>
-</li>
-<li>x86<ul>
-<li>X86_64</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="兼容模式运行的一些问题"><a href="#兼容模式运行的一些问题" class="headerlink" title="兼容模式运行的一些问题"></a>兼容模式运行的一些问题</h3><ul>
-<li><p>兼容模式运行的Native库无法获得最优性能</p>
-</li>
-<li><p>兼容模式容易出现一些难以排查的内存问题</p>
-</li>
-<li><p>系统优先加载对应架构目录下的so库</p>
-</li>
-</ul>
-<h3 id="为App提供不同架构的Native库"><a href="#为App提供不同架构的Native库" class="headerlink" title="为App提供不同架构的Native库"></a>为App提供不同架构的Native库</h3><p>例如：</p>
-<ul>
-<li><p>libs</p>
-<ul>
-<li><p>Armeabi-v7a</p>
-<ul>
-<li><p>libmath.so</p>
-</li>
-<li><p>libmath_v8a.so</p>
-</li>
-<li><p>libui.so</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<blockquote>
-<p>线上监控问题，针对性提供Native库</p>
-<p>非启动加载的库可云端加载</p>
-</blockquote>
-<h3 id="优化so体积"><a href="#优化so体积" class="headerlink" title="优化so体积"></a>优化so体积</h3><ul>
-<li><p>默认隐藏所有符号，只公开必要的</p>
-<ul>
-<li>fvisibility=hidden</li>
-</ul>
-</li>
-<li><p>禁用C++Exception &amp; RTTI</p>
-<ul>
-<li>-fno-exceptions -fno-rtti</li>
-</ul>
-</li>
-<li>不要使用iostream，优先使用Android Log</li>
-<li>使用gc-sections去除无用代码<ul>
-<li>LOCAL_CFLAGS +=-ffuntion-sections -fdata-sections</li>
-<li>LOCAL_LDFLAGS += -Wl, –gc-sections</li>
-</ul>
-</li>
-</ul>
-<h3 id="构建时分包"><a href="#构建时分包" class="headerlink" title="构建时分包"></a>构建时分包</h3><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">splits&#123;</span><br><span class="line">  abi&#123;</span><br><span class="line">    enable <span class="literal">true</span></span><br><span class="line">    reset()</span><br><span class="line">    include <span class="string">'armeabi-v7a'</span>, <span class="string">'arm64-v8a'</span>, <span class="string">'x86'</span>, <span class="string">'x86_64'</span></span><br><span class="line">    universalApk <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>通过CPU架构分发安装包</p>
-<h3 id="开发者需要注意"><a href="#开发者需要注意" class="headerlink" title="开发者需要注意"></a>开发者需要注意</h3><ul>
-<li>尽量不在Native层开发，降低问题跟踪维护成本</li>
-<li>尽量优化Native库体积，降低开发者的使用成本</li>
-<li>必须提供完整的CPU架构依赖</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/08/组件化/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Zhujiaqqq">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zhujiaqqq Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/07/08/组件化/" itemprop="url">组件化</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-08T10:27:27+08:00">
-                2019-07-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>组件化需要考虑的问题：</p>
-<ul>
-<li>代码解耦</li>
-<li>组件单独运行</li>
-<li>数据传递</li>
-<li>UI跳转</li>
-<li>组件的生命周期</li>
-<li>集成调试</li>
-<li>代码隔离</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1994,7 +2008,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-count">28</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2005,7 +2019,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -2016,7 +2030,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-count">36</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
