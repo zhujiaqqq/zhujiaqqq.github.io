@@ -252,6 +252,550 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/20/ConcurrentHashMap如何支持并发访问/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zhujiaqqq">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zhujiaqqq Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/08/20/ConcurrentHashMap如何支持并发访问/" itemprop="url">ConcurrentHashMap如何支持并发访问</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-20T22:04:03+08:00">
+                2019-08-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <ul>
+<li>CHM分段锁的Hash优化JDK6（之前分段不均匀）</li>
+<li>CHM分段锁懒加载JDK7</li>
+<li>CHM摒弃分段锁JDK8（通过hash(key)访问table，对单个table元素加锁）</li>
+</ul>
+<h4 id="CHM如何计数"><a href="#CHM如何计数" class="headerlink" title="CHM如何计数"></a>CHM如何计数</h4><ul>
+<li>JDK5-7基于段元素个数求和，二次不同就加锁</li>
+<li>JDK8引入CounterCell，本质上也是分段计数</li>
+</ul>
+<h4 id="CHM是弱一致性都"><a href="#CHM是弱一致性都" class="headerlink" title="CHM是弱一致性都"></a>CHM是弱一致性都</h4><ul>
+<li>添加元素后不一定马上能读到</li>
+<li>清空之后可能仍然会有元素</li>
+<li>遍历之前的段元素的变化会读到</li>
+<li>遍历之后的段元素变化读不到</li>
+<li>遍历时元素发生变化不抛异常</li>
+</ul>
+<h4 id="HashTable的问题"><a href="#HashTable的问题" class="headerlink" title="HashTable的问题"></a>HashTable的问题</h4><ul>
+<li>大锁：对HashTable对象加锁</li>
+<li>长锁：直接对方法加锁</li>
+<li>读写锁共用：只有一把锁，从头锁到尾</li>
+</ul>
+<h4 id="针对HashTable的优化，CHM的解法"><a href="#针对HashTable的优化，CHM的解法" class="headerlink" title="针对HashTable的优化，CHM的解法"></a>针对HashTable的优化，CHM的解法</h4><ul>
+<li>小锁：分段锁（5-7）、桶节点锁（8）</li>
+<li>短锁：先尝试获取，失败再加锁</li>
+<li>分离读写锁：读失败再加锁（5-7），volatile读CAS写（7-8）</li>
+</ul>
+<h4 id="如何进行锁优化"><a href="#如何进行锁优化" class="headerlink" title="如何进行锁优化"></a>如何进行锁优化</h4><ul>
+<li>长锁不如短锁</li>
+<li>大锁不如小锁</li>
+<li>公锁不如私锁</li>
+<li>嵌套锁不如扁平锁</li>
+<li>分离读写锁</li>
+<li>粗化高频锁</li>
+<li>消除无用锁</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/18/如何做到线程安全/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zhujiaqqq">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zhujiaqqq Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/08/18/如何做到线程安全/" itemprop="url">如何做到线程安全</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-18T20:19:21+08:00">
+                2019-08-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="什么是线程安全"><a href="#什么是线程安全" class="headerlink" title="什么是线程安全"></a>什么是线程安全</h4><p><strong>可变</strong>资源（内存）线程间<strong>共享</strong></p>
+<h4 id="如何实现线程安全"><a href="#如何实现线程安全" class="headerlink" title="如何实现线程安全"></a>如何实现线程安全</h4><ul>
+<li>不共享资源（ThreadLocal）</li>
+<li>共享不可变资源（可重入函数）</li>
+<li>对于共享可变资源，需要：1、 可见性；2、操作原子性；3、禁止重排序</li>
+</ul>
+<h4 id="ThreadLocal"><a href="#ThreadLocal" class="headerlink" title="ThreadLocal"></a>ThreadLocal</h4><p>ThreadLocal本质上是一个绑定到Thread中的Map（ThreadLocalMap），Map的key为ThreadLocal对象本身，value为需要存入的值。</p>
+<p>ThreadLocal的使用建议：</p>
+<ul>
+<li>声明为全局静态final成员</li>
+<li>避免存储大量数据</li>
+<li>用完后及时移除对象</li>
+</ul>
+<h4 id="禁止重排序"><a href="#禁止重排序" class="headerlink" title="禁止重排序"></a>禁止重排序</h4><ul>
+<li><p>在重排序的情况下，final的成员变量会在构造方法中赋值，而非finial的成员变量可能会在构造方法外才被赋值（所以说final有禁止重排序的功能）。</p>
+</li>
+<li><p>Volatile 让对象保证线程可见，禁止重排序。</p>
+</li>
+</ul>
+<h4 id="保证线程可见性"><a href="#保证线程可见性" class="headerlink" title="保证线程可见性"></a>保证线程可见性</h4><ul>
+<li>final</li>
+<li>volatile</li>
+<li>加锁，当锁释放时会强制将缓存刷新到主内存</li>
+</ul>
+<h4 id="保证原子性"><a href="#保证原子性" class="headerlink" title="保证原子性"></a>保证原子性</h4><ul>
+<li>加锁，保证操作的互斥性</li>
+<li>使用原子数值类型（AtomicInteger, …）</li>
+<li>使用原子属性更新器(AtomicRefrenceFieldUpdater)</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/17/如何停止一个线程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zhujiaqqq">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zhujiaqqq Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/08/17/如何停止一个线程/" itemprop="url">如何停止一个线程</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-17T21:36:33+08:00">
+                2019-08-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="为什么不能用Thread-stop-方法停止线程？"><a href="#为什么不能用Thread-stop-方法停止线程？" class="headerlink" title="为什么不能用Thread.stop()方法停止线程？"></a>为什么不能用<code>Thread.stop()</code>方法停止线程？</h3><p><code>Thread.stop()</code>是不安全的，被stop的线程立即销毁，此线程访问的内存和文件没有进行保护处理，之后访问的线程会拿到错误的数据。</p>
+<h2 id="正确停止线程的方法"><a href="#正确停止线程的方法" class="headerlink" title="正确停止线程的方法"></a>正确停止线程的方法</h2><h4 id="协作的任务执行模式"><a href="#协作的任务执行模式" class="headerlink" title="协作的任务执行模式"></a>协作的任务执行模式</h4><ul>
+<li>通过目标线程自行结束，而不是强制停止</li>
+<li>目标线程应当具备处理中断的能力</li>
+<li>中断方式<ul>
+<li>Interrupt</li>
+<li>volatile boolean 标志位</li>
+</ul>
+</li>
+</ul>
+<h4 id="interrupted-与isInterrupted-区别"><a href="#interrupted-与isInterrupted-区别" class="headerlink" title="interrupted()与isInterrupted()区别"></a><em>interrupted()</em>与isInterrupted()区别</h4><ul>
+<li><em>interrupted()</em>是静态方法，获取当前线程的中断状态，并清空<ul>
+<li>当前运行的线程</li>
+<li>中断状态调用后清空，重复调用后继续返回false</li>
+</ul>
+</li>
+<li>isInterrupted()是非静态方法，获取该线程的中断状态，不清空<ul>
+<li>调用的线程对象对应的线程</li>
+<li>可以重复调用，中断清空前一直返回true</li>
+</ul>
+</li>
+</ul>
+<h4 id="interrupt与boolean标志位对比"><a href="#interrupt与boolean标志位对比" class="headerlink" title="interrupt与boolean标志位对比"></a>interrupt与boolean标志位对比</h4><table>
+<thead>
+<tr>
+<th></th>
+<th>interrupt</th>
+<th>boolean标志位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>对系统方法（sleep）有效</td>
+<td>是</td>
+<td>否</td>
+</tr>
+<tr>
+<td>使用JNI</td>
+<td>是</td>
+<td>否</td>
+</tr>
+<tr>
+<td>加锁</td>
+<td>是</td>
+<td>否</td>
+</tr>
+<tr>
+<td>触发方式</td>
+<td>抛异常</td>
+<td>布尔值判断，也可抛异常</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>需要支持系统方法（sleep）时用中断</li>
+<li>其他情况用boolean标志位（jni有性能开销，所以标志位性能更好）</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/17/CPU架构适配需要注意哪些问题/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1238,820 +1782,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/09/Mac中sftp使用/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Zhujiaqqq">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zhujiaqqq Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/06/09/Mac中sftp使用/" itemprop="url">Mac中sftp使用</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-09T22:21:47+08:00">
-                2019-06-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Tools/" itemprop="url" rel="index">
-                    <span itemprop="name">Tools</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="使用的工具"><a href="#使用的工具" class="headerlink" title="使用的工具"></a>使用的工具</h3><p>系统自带的Terminal(终端)</p>
-<h3 id="开启sftp"><a href="#开启sftp" class="headerlink" title="开启sftp"></a>开启sftp</h3><p>点击：</p>
-<p>Shell-&gt;新建远程连接<img src="/img/10_25_07.png" alt></p>
-<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p><img src="/img/10_27_48.png" alt></p>
-<ul>
-<li><p>服务：安全文件传输（sftp）</p>
-</li>
-<li><p>服务器：输入自己需要连接的服务器IP</p>
-</li>
-<li><p>用户：输入自己需要连接的服务器用户名</p>
-</li>
-<li><p>点击连接</p>
-</li>
-<li>输入密码<img src="/img/10_29_46.png" alt></li>
-</ul>
-<blockquote>
-<p>sftp常用指令：</p>
-<ul>
-<li><p>pwd/lpwd</p>
-<p>查看远程/本地的当前目录</p>
-</li>
-<li><p>ls/lls</p>
-<p>查看远程/本地当前目录下的文件及文件夹</p>
-</li>
-<li><p>put xxx</p>
-<p>将本地xxx上传到远程端</p>
-</li>
-<li><p>get xxx</p>
-<p>将远程端xxx下载到本地</p>
-</li>
-<li><p>!command</p>
-<p>以！开头的指令为本地指令，没有！的指令为远程端指令</p>
-</li>
-<li><p>exit/quit</p>
-<p>退出sftp模式</p>
-</li>
-</ul>
-</blockquote>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/09/ShadowScoks服务器搭建/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Zhujiaqqq">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zhujiaqqq Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/06/09/ShadowScoks服务器搭建/" itemprop="url">ShadowSocks服务器搭建</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-09T12:27:30+08:00">
-                2019-06-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Tools/" itemprop="url" rel="index">
-                    <span itemprop="name">Tools</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="硬件需求"><a href="#硬件需求" class="headerlink" title="硬件需求"></a>硬件需求</h2><p>一个云服务器，能访问国际网络</p>
-<h2 id="安装ShadowSocks"><a href="#安装ShadowSocks" class="headerlink" title="安装ShadowSocks"></a>安装ShadowSocks</h2><ul>
-<li>安装pip工具<ul>
-<li>yum install python-pip</li>
-</ul>
-</li>
-<li>通过pip安装ShadowSocks<ul>
-<li>pip install shadowsocks</li>
-</ul>
-</li>
-</ul>
-<h2 id="配置ShadowSocks服务"><a href="#配置ShadowSocks服务" class="headerlink" title="配置ShadowSocks服务"></a>配置ShadowSocks服务</h2><ol>
-<li>新建一个ShadowSocks的配置文件：<code>/etc/shadowsocks.json</code></li>
-<li>写入配置：</li>
-</ol>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line"><span class="attr">"server"</span>:<span class="string">"0.0.0.0"</span>,</span><br><span class="line"><span class="attr">"server_port"</span>:<span class="number">443</span>,</span><br><span class="line"><span class="attr">"local_address"</span>:<span class="string">"127.0.0.1"</span>,</span><br><span class="line"><span class="attr">"local_port"</span>:<span class="number">1080</span>,</span><br><span class="line"><span class="attr">"password"</span>:<span class="string">"your-passwd"</span>,</span><br><span class="line"><span class="attr">"timeout"</span>:<span class="number">300</span>,</span><br><span class="line"><span class="attr">"method"</span>:<span class="string">"aes-256-cfb"</span>,</span><br><span class="line"><span class="attr">"fast_open"</span>:<span class="literal">false</span>,</span><br><span class="line"><span class="attr">"workers"</span>:<span class="number">5</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="启动ShadowSocks服务："><a href="#启动ShadowSocks服务：" class="headerlink" title="启动ShadowSocks服务："></a>启动ShadowSocks服务：</h2><p><code>ssserver -c /etc/shadowsocks.json -d start</code></p>
-<blockquote>
-<p>关闭ShadowSocks服务命令：<code>ssserver -c /etc/shadowsocks.json -d stop</code></p>
-</blockquote>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/02/java基础题/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Zhujiaqqq">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zhujiaqqq Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/06/02/java基础题/" itemprop="url">java基础题</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-02T10:43:08+08:00">
-                2019-06-02
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index">
-                    <span itemprop="name">java</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <table>
-<thead>
-<tr>
-<th style="text-align:center">1</th>
-<th style="text-align:left">java中==和equals和hashCode的区别</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>2</strong></td>
-<td style="text-align:left"><strong>int和Integer的区别</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>3</strong></td>
-<td style="text-align:left"><strong>String、StringBuffer、StringBuilder的区别</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>4</strong></td>
-<td style="text-align:left"><strong>什么是内部类？内部类的作用</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>5</strong></td>
-<td style="text-align:left"><strong>进程和线程的区别</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>6</strong></td>
-<td style="text-align:left"><strong>final、finally、finalize的区别</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>7</strong></td>
-<td style="text-align:left"><strong>Serializable和Parcelable的区别</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>8</strong></td>
-<td style="text-align:left"><strong>静态属性和静态方法是否可以被继承？是否可以被重写？以及原因</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>9</strong></td>
-<td style="text-align:left"><strong>成员内部类、静态内部类、局部内部类和匿名内部类的理解，以及项目中的应用</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>10</strong></td>
-<td style="text-align:left"><strong>String转Integer的方式及原理</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>11</strong></td>
-<td style="text-align:left"><strong>哪些情况下的对象会被垃圾回收机制处理掉</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>12</strong></td>
-<td style="text-align:left"><strong>静态代理和动态代理的区别，什么场景使用</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>13</strong></td>
-<td style="text-align:left"><strong>Java中实现多态的机制是什么</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>14</strong></td>
-<td style="text-align:left"><strong>说说你对Java反射的理解</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>15</strong></td>
-<td style="text-align:left"><strong>说说你对Java注解的理解</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>16</strong></td>
-<td style="text-align:left"><strong>Java中String的了解</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>17</strong></td>
-<td style="text-align:left"><strong>String为什么要设计成不可变的？</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>18</strong></td>
-<td style="text-align:left"><strong>Object类的equal和hashCode方法重写，为什么</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>19</strong></td>
-<td style="text-align:left"><strong>List、Set、Map的区别</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>20</strong></td>
-<td style="text-align:left"><strong>ArrayMap和HashMap的对比</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>21</strong></td>
-<td style="text-align:left"><strong>HashMap和HashTable的区别</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>22</strong></td>
-<td style="text-align:left"><strong>HashMap和HashSet的区别</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>23</strong></td>
-<td style="text-align:left"><strong>HashSet如何判断集合元素重复</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>24</strong></td>
-<td style="text-align:left"><strong>ArrayList和LinkedList的区别，以及应用场景</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>25</strong></td>
-<td style="text-align:left"><strong>数组和链表的区别</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>26</strong></td>
-<td style="text-align:left"><strong>开启线程的三种方式</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>27</strong></td>
-<td style="text-align:left"><strong>线程中run()和start()方法的区别</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>28</strong></td>
-<td style="text-align:left"><strong>如何控制某个方法允许并发访问线程的个数</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>29</strong></td>
-<td style="text-align:left"><strong>在Java中wait和sleep方法的不同</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>30</strong></td>
-<td style="text-align:left"><strong>谈谈wait、notify关键词的理解</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>31</strong></td>
-<td style="text-align:left"><strong>什么导致线程阻塞？线程如何关闭？</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>32</strong></td>
-<td style="text-align:left"><strong>如何保证线程安全？</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>33</strong></td>
-<td style="text-align:left"><strong>如何实现线程同步？</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>34</strong></td>
-<td style="text-align:left"><strong>线程间操作List</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>35</strong></td>
-<td style="text-align:left"><strong>谈谈对synchronized关键词、类锁、方法锁、重入锁的理解</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>36</strong></td>
-<td style="text-align:left"><strong>synchronized和volatile关键词的区别</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>37</strong></td>
-<td style="text-align:left"><strong>ReentrantLock synchronized volatile比较</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>38</strong></td>
-<td style="text-align:left"><strong>死锁的四个必要条件</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>39</strong></td>
-<td style="text-align:left"><strong>什么是线程池，如何使用</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>40</strong></td>
-<td style="text-align:left"><strong>Java中堆和栈有什么不同</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>41</strong></td>
-<td style="text-align:left"><strong>有三个线程T1、T2、T3，怎么确保它们按顺序执行</strong></td>
-</tr>
-<tr>
-<td style="text-align:center"></td>
-</tr>
-</tbody>
-</table>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2102,7 +1832,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2113,7 +1843,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -2124,7 +1854,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-count">38</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
