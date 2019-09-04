@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="内存泄漏,OOM,Android优化,">
+  <meta name="keywords" content="Java,OOM,内存溢出,">
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="OOM是Java 异常，java.lang.OutOfMemoryError  导致OOM的原因：  加载大图片导致内存溢出 大量的内存泄漏   解决方法：  使用更轻量的数据结构 避免在Android里面使用Enum 减少Bitmap对象的内存占用：缩放比例、解码格式 使用更小的图片 复用系统自带的资源 ListView、GridView中对ConvertView的复用，ViewHolder内">
-<meta name="keywords" content="内存泄漏,OOM,Android优化">
+<meta name="description" content="OOM的产生 已使用内存+新申请内存&amp;gt;可分配内存 OOM几乎覆盖所有的内存区域，通常指堆内存 Native Heap在物理内存不够时也会抛出OOM  使用合适的数据结构 HashMap——大于1000个数、增删频繁 ArrayMap——key不是整型 SparseArray——Key是整型（池化技术、内存复用）  避免使用枚举每一个枚举就是一个对象，对象至少占24字节。所以使用静态常量： 1">
+<meta name="keywords" content="Java,OOM,内存溢出">
 <meta property="og:type" content="article">
-<meta property="og:title" content="OOM是什么？什么情况导致OOM？有什么解决方法可以避免OOM？">
-<meta property="og:url" content="http://yoursite.com/2019/04/11/OOM是什么/什么情况导致OOM/有什么解决方法可以避免OOM/index.html">
+<meta property="og:title" content="如何避免OOM产生">
+<meta property="og:url" content="http://yoursite.com/2019/09/03/如何避免OOM产生/index.html">
 <meta property="og:site_name" content="Zhujiaqqq Blog">
-<meta property="og:description" content="OOM是Java 异常，java.lang.OutOfMemoryError  导致OOM的原因：  加载大图片导致内存溢出 大量的内存泄漏   解决方法：  使用更轻量的数据结构 避免在Android里面使用Enum 减少Bitmap对象的内存占用：缩放比例、解码格式 使用更小的图片 复用系统自带的资源 ListView、GridView中对ConvertView的复用，ViewHolder内">
+<meta property="og:description" content="OOM的产生 已使用内存+新申请内存&amp;gt;可分配内存 OOM几乎覆盖所有的内存区域，通常指堆内存 Native Heap在物理内存不够时也会抛出OOM  使用合适的数据结构 HashMap——大于1000个数、增删频繁 ArrayMap——key不是整型 SparseArray——Key是整型（池化技术、内存复用）  避免使用枚举每一个枚举就是一个对象，对象至少占24字节。所以使用静态常量： 1">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-04-11T14:35:46.900Z">
+<meta property="og:updated_time" content="2019-09-04T14:48:36.911Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="OOM是什么？什么情况导致OOM？有什么解决方法可以避免OOM？">
-<meta name="twitter:description" content="OOM是Java 异常，java.lang.OutOfMemoryError  导致OOM的原因：  加载大图片导致内存溢出 大量的内存泄漏   解决方法：  使用更轻量的数据结构 避免在Android里面使用Enum 减少Bitmap对象的内存占用：缩放比例、解码格式 使用更小的图片 复用系统自带的资源 ListView、GridView中对ConvertView的复用，ViewHolder内">
+<meta name="twitter:title" content="如何避免OOM产生">
+<meta name="twitter:description" content="OOM的产生 已使用内存+新申请内存&amp;gt;可分配内存 OOM几乎覆盖所有的内存区域，通常指堆内存 Native Heap在物理内存不够时也会抛出OOM  使用合适的数据结构 HashMap——大于1000个数、增删频繁 ArrayMap——key不是整型 SparseArray——Key是整型（池化技术、内存复用）  避免使用枚举每一个枚举就是一个对象，对象至少占24字节。所以使用静态常量： 1">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/04/11/OOM是什么/什么情况导致OOM/有什么解决方法可以避免OOM/">
+  <link rel="canonical" href="http://yoursite.com/2019/09/03/如何避免OOM产生/">
 
 
 
 
 
-  <title>OOM是什么？什么情况导致OOM？有什么解决方法可以避免OOM？ | Zhujiaqqq Blog</title>
+  <title>如何避免OOM产生 | Zhujiaqqq Blog</title>
   
 
 
@@ -253,7 +253,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/11/OOM是什么/什么情况导致OOM/有什么解决方法可以避免OOM/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/03/如何避免OOM产生/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Zhujiaqqq">
@@ -270,7 +270,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">OOM是什么？什么情况导致OOM？有什么解决方法可以避免OOM？</h1>
+          <h1 class="post-title" itemprop="name headline">如何避免OOM产生</h1>
         
 
         <div class="post-meta">
@@ -282,8 +282,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-11T22:18:29+08:00">
-                2019-04-11
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-03T22:36:42+08:00">
+                2019-09-03
               </time>
             
 
@@ -342,28 +342,36 @@
       
 
       
-        <ul>
-<li><p>OOM是Java 异常，java.lang.OutOfMemoryError</p>
-</li>
-<li><p>导致OOM的原因：</p>
-<ul>
-<li>加载大图片导致内存溢出</li>
-<li>大量的内存泄漏</li>
+        <h3 id="OOM的产生"><a href="#OOM的产生" class="headerlink" title="OOM的产生"></a>OOM的产生</h3><ul>
+<li>已使用内存+新申请内存&gt;可分配内存</li>
+<li>OOM几乎覆盖所有的内存区域，通常指堆内存</li>
+<li>Native Heap在物理内存不够时也会抛出OOM</li>
 </ul>
-</li>
-<li><p>解决方法：</p>
-<ul>
-<li>使用更轻量的数据结构</li>
-<li>避免在Android里面使用Enum</li>
-<li>减少Bitmap对象的内存占用：缩放比例、解码格式</li>
-<li>使用更小的图片</li>
-<li>复用系统自带的资源</li>
-<li>ListView、GridView中对ConvertView的复用，ViewHolder内部类使用</li>
-<li>避免onDraw方法中执行对象的创建</li>
-<li>用StringBuilder进行拼接</li>
-<li>注意Activity的泄漏：内部类引用导致Activity泄漏、Activity的Context被传递到其他实例中，可能导致自身被引用而发生泄漏。</li>
+<h3 id="使用合适的数据结构"><a href="#使用合适的数据结构" class="headerlink" title="使用合适的数据结构"></a>使用合适的数据结构</h3><ul>
+<li>HashMap——大于1000个数、增删频繁</li>
+<li>ArrayMap——key不是整型</li>
+<li>SparseArray——Key是整型（池化技术、内存复用）</li>
 </ul>
+<h3 id="避免使用枚举"><a href="#避免使用枚举" class="headerlink" title="避免使用枚举"></a>避免使用枚举</h3><p>每一个枚举就是一个对象，对象至少占24字节。所以使用静态常量：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Retention</span>(value = RetentionPolicy.SOURCE)</span><br><span class="line"><span class="meta">@IntDef</span>(value = &#123;COMMON, LOAD_MORE, LOAD_REFRESH&#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> LoadType &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> COMMON = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> LOAD_MORE = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> LOAD_REFRESH = <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
+<p>Kotlin 可以使用内联类，编译时转化为int，节省内存。</p>
+<h3 id="Bitmap"><a href="#Bitmap" class="headerlink" title="Bitmap"></a>Bitmap</h3><ul>
+<li><p>尽量根据实际需求选择合适的分辨率</p>
 </li>
+<li><p>不用帧动画，使用代码实现动效</p>
+</li>
+<li><p>使用Bitmap重采用和复用配置</p>
+<h3 id="使用NDK"><a href="#使用NDK" class="headerlink" title="使用NDK"></a>使用NDK</h3></li>
+<li><p>Native Heap没有专门的使用限制</p>
+</li>
+<li>内存大户的核心逻辑主要在Native 层</li>
+</ul>
+<h3 id="内存优化5R法则"><a href="#内存优化5R法则" class="headerlink" title="内存优化5R法则"></a>内存优化5R法则</h3><ul>
+<li>Reduce缩减：降低图片分辨率/重采样/抽稀策略</li>
+<li>Reuse复用：池化策略/避免频繁创建对象，减小GC压力</li>
+<li>Recycle回收：主动销毁、结束，避免内存泄露/生命周期闭环</li>
+<li>Refactor重构：更合适的数据结构/更合理的程序架构</li>
+<li>Revalue重审：谨慎使用Large Heap/多进程/第三方框架</li>
 </ul>
 
       
@@ -382,11 +390,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/内存泄漏/" rel="tag"># 内存泄漏</a>
+            <a href="/tags/Java/" rel="tag"># Java</a>
           
             <a href="/tags/OOM/" rel="tag"># OOM</a>
           
-            <a href="/tags/Android优化/" rel="tag"># Android优化</a>
+            <a href="/tags/内存溢出/" rel="tag"># 内存溢出</a>
           
         </div>
       
@@ -399,8 +407,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/04/08/ANR定位和修正/" rel="next" title="ANR定位和修正">
-                <i class="fa fa-chevron-left"></i> ANR定位和修正
+              <a href="/2019/09/01/RxJava中CompositeDisposable注意事项/" rel="next" title="RxJava中CompositeDisposable注意事项">
+                <i class="fa fa-chevron-left"></i> RxJava中CompositeDisposable注意事项
               </a>
             
           </div>
@@ -408,10 +416,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/04/16/什么情况导致内存泄漏？/" rel="prev" title="什么情况导致内存泄漏？">
-                什么情况导致内存泄漏？ <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -463,8 +467,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -479,7 +492,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">33</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -501,7 +514,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-count">41</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -524,6 +537,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#OOM的产生"><span class="nav-number">1.</span> <span class="nav-text">OOM的产生</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用合适的数据结构"><span class="nav-number">2.</span> <span class="nav-text">使用合适的数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#避免使用枚举"><span class="nav-number">3.</span> <span class="nav-text">避免使用枚举</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bitmap"><span class="nav-number">4.</span> <span class="nav-text">Bitmap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用NDK"><span class="nav-number">5.</span> <span class="nav-text">使用NDK</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存优化5R法则"><span class="nav-number">6.</span> <span class="nav-text">内存优化5R法则</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
