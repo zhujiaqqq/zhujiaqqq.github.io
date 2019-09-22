@@ -252,6 +252,339 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/22/FFmpeg抽取视频数据/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zhujiaqqq">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zhujiaqqq Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/09/22/FFmpeg抽取视频数据/" itemprop="url">FFmpeg抽取视频数据</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-22T20:44:11+08:00">
+                2019-09-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/音视频/" itemprop="url" rel="index">
+                    <span itemprop="name">音视频</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>SPS/PPS在ffmpeg的codec-&gt;extradata中获取</p>
+<ol>
+<li><p>加载ffmpeg的日志模块</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;libavutil/log.h&gt;</span></span></span><br><span class="line">...</span><br><span class="line">av_log_set_level(AV_LOG_DEBUG);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>注册所有编解码器</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*register all formats and codec*/</span></span><br><span class="line">av_register_all();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>打开视频文件并获取视频文件上下文</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">AVFormatContext *fmt_ctx = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*open input media file, and allocate format context*/</span></span><br><span class="line"><span class="keyword">if</span>((err_code = avformat_open_input(&amp;fmt_ctx, src_filename, <span class="literal">NULL</span>, <span class="literal">NULL</span>)) &lt; <span class="number">0</span>)&#123;</span><br><span class="line">	av_strerror(err_code, errors, <span class="number">1024</span>);</span><br><span class="line">	av_log(<span class="literal">NULL</span>, AV_LOG_DEBUG, <span class="string">"Could not open source file: %s, %d(%s)\n"</span>,</span><br><span class="line">               src_filename,</span><br><span class="line">               err_code,</span><br><span class="line">               errors);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>打印视频详细信息</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*dump input information*/</span></span><br><span class="line">av_dump_format(fmt_ctx, <span class="number">0</span>, src_filename, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>生成一个空的数据包，用于接收视频包</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*initialize packet*/</span></span><br><span class="line">av_init_packet(&amp;pkt);</span><br><span class="line">pkt.data = <span class="literal">NULL</span>;</span><br><span class="line">pkt.size = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取视频流</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*find best video stream*/</span></span><br><span class="line">video_stream_index = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_VIDEO, <span class="number">-1</span>, <span class="number">-1</span>, <span class="literal">NULL</span>, <span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span> (video_stream_index &lt; <span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">	av_log(<span class="literal">NULL</span>, AV_LOG_ERROR, <span class="string">"Could not find %s stream in input file %s\n"</span>,  av_get_media_type_string(AVMEDIA_TYPE_VIDEO),src_filename);</span><br><span class="line">	<span class="keyword">return</span> AVERROR(EINVAL);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>循环读取视频流中的包，进行处理</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*read frames from media file*/</span></span><br><span class="line"><span class="keyword">while</span> (av_read_frame(fmt_ctx, &amp;pkt) &gt;= <span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">if</span> (pkt.stream_index == video_stream_index)</span><br><span class="line">&#123;</span><br><span class="line">   h264_mp4toannexb(fmt_ctx, &amp;pkt, dst_fd);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//release pkt-&gt;data</span></span><br><span class="line">av_packet_unref(&amp;pkt);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li><p>对包进行处理，提取帧数据进行写文件</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">h264_mp4toannexb</span><span class="params">(AVFormatContext *fmt_ctx, AVPacket *in, FILE *dst_fd)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    AVPacket *out = <span class="literal">NULL</span>;</span><br><span class="line">    AVPacket spspps_pkt;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> len;</span><br><span class="line">    <span class="keyword">uint8_t</span> unit_type;</span><br><span class="line">    <span class="keyword">int32_t</span> nal_size;</span><br><span class="line">    <span class="keyword">uint32_t</span> cumul_size = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">uint8_t</span> *buf;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">uint8_t</span> *buf_end;</span><br><span class="line">    <span class="keyword">int</span> buf_size;</span><br><span class="line">    <span class="keyword">int</span> ret = <span class="number">0</span>, i;</span><br><span class="line"></span><br><span class="line">    out = av_packet_alloc();</span><br><span class="line"></span><br><span class="line">    buf = in-&gt;data;</span><br><span class="line">    buf_size = in-&gt;size;</span><br><span class="line">    buf_end = in-&gt;data + in-&gt;size;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">    &#123;</span><br><span class="line">        ret = AVERROR(EINVAL);</span><br><span class="line">        <span class="keyword">if</span> (buf + <span class="number">4</span> <span class="comment">/*s-&gt;length_size*/</span> &gt; buf_end)</span><br><span class="line">            <span class="keyword">goto</span> fail;</span><br><span class="line">        <span class="comment">//一个AVPacket中存的可能是一帧也可能是多帧</span></span><br><span class="line">        <span class="comment">// nal_size是一个帧的具体大小，在帧的头部的前4个字节</span></span><br><span class="line">        <span class="keyword">for</span> (nal_size = <span class="number">0</span>, i = <span class="number">0</span>; i &lt; <span class="number">4</span> <span class="comment">/*s-&gt;length_size*/</span>; i++)</span><br><span class="line">            nal_size = (nal_size &lt;&lt; <span class="number">8</span>) | buf[i];</span><br><span class="line"></span><br><span class="line">        buf += <span class="number">4</span>; <span class="comment">/*s-&gt;length_size;*/</span></span><br><span class="line">        <span class="comment">//帧数据的第一个字节的后5位是这个帧的nal单元</span></span><br><span class="line">        <span class="comment">/* nal:     7 -&gt; sps</span></span><br><span class="line"><span class="comment">                    8 -&gt; pps</span></span><br><span class="line"><span class="comment">                    key frame -&gt; 5</span></span><br><span class="line"><span class="comment">                    normal frame -&gt; 1 */</span></span><br><span class="line">        unit_type = *buf &amp; <span class="number">0x1f</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (nal_size &gt; buf_end - buf || nal_size &lt; <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">goto</span> fail;</span><br><span class="line">        <span class="comment">/* prepend only to the first type 5 NAL unit of an IDR picture, if no sps/pps are already present */</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="comment">/*s-&gt;new_idr &amp;&amp; */</span> unit_type == <span class="number">5</span> <span class="comment">/*&amp;&amp; !s-&gt;idr_sps_seen &amp;&amp; !s-&gt;idr_pps_seen*/</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 关键帧，需要获取sps/pps数据，并重新修改视频宽高比等参数</span></span><br><span class="line">            h264_extradata_to_annexb(fmt_ctx-&gt;streams[in-&gt;stream_index]-&gt;codec-&gt;extradata,</span><br><span class="line">                                     fmt_ctx-&gt;streams[in-&gt;stream_index]-&gt;codec-&gt;extradata_size,</span><br><span class="line">                                     &amp;spspps_pkt,</span><br><span class="line">                                     AV_INPUT_BUFFER_PADDING_SIZE);</span><br><span class="line">            <span class="comment">// 为数据增加特征码</span></span><br><span class="line">            <span class="keyword">if</span> ((ret = alloc_and_copy(out,</span><br><span class="line">                                      spspps_pkt.data, spspps_pkt.size,</span><br><span class="line">                                      buf, nal_size)) &lt; <span class="number">0</span>)</span><br><span class="line">                <span class="keyword">goto</span> fail;</span><br><span class="line">            <span class="comment">/*s-&gt;new_idr = 0;*/</span></span><br><span class="line">            <span class="comment">/* if only SPS has been seen, also insert PPS */</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> ((ret = alloc_and_copy(out, <span class="literal">NULL</span>, <span class="number">0</span>, buf, nal_size)) &lt; <span class="number">0</span>)</span><br><span class="line">                <span class="keyword">goto</span> fail;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        len = fwrite(out-&gt;data, <span class="number">1</span>, out-&gt;size, dst_fd);</span><br><span class="line">        <span class="keyword">if</span> (len != out-&gt;size)</span><br><span class="line">        &#123;</span><br><span class="line">            av_log(<span class="literal">NULL</span>, AV_LOG_DEBUG, <span class="string">"warning, length of writed data isn't equal pkt.size(%d, %d)\n"</span>,</span><br><span class="line">                   len,</span><br><span class="line">                   out-&gt;size);</span><br><span class="line">        &#125;</span><br><span class="line">        fflush(dst_fd);</span><br><span class="line"></span><br><span class="line">    next_nal:</span><br><span class="line">        buf += nal_size;</span><br><span class="line">        cumul_size += nal_size + <span class="number">4</span>; <span class="comment">//s-&gt;length_size;</span></span><br><span class="line">    &#125; <span class="keyword">while</span> (cumul_size &lt; buf_size);</span><br><span class="line">fail:</span><br><span class="line">    av_packet_free(&amp;out);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+</ol>
+<ol start="2">
+<li><p>获取SPS/PPS数据</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">h264_extradata_to_annexb</span><span class="params">(<span class="keyword">const</span> <span class="keyword">uint8_t</span> *codec_extradata, <span class="keyword">const</span> <span class="keyword">int</span> codec_extradata_size, AVPacket *out_extradata, <span class="keyword">int</span> padding)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">uint16_t</span> unit_size;</span><br><span class="line">    <span class="keyword">uint64_t</span> total_size = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">uint8_t</span> *out = <span class="literal">NULL</span>, unit_nb, sps_done = <span class="number">0</span>,</span><br><span class="line">            sps_seen = <span class="number">0</span>, pps_seen = <span class="number">0</span>, sps_offset = <span class="number">0</span>, pps_offset = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">uint8_t</span> *extradata = codec_extradata + <span class="number">4</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">uint8_t</span> nalu_header[<span class="number">4</span>] = &#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>&#125;;</span><br><span class="line">    <span class="keyword">int</span> length_size = (*extradata++ &amp; <span class="number">0x3</span>) + <span class="number">1</span>; <span class="comment">// retrieve length coded size, 用于指示表示编码数据长度所需字节数</span></span><br><span class="line"></span><br><span class="line">    sps_offset = pps_offset = <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* retrieve sps and pps unit(s) */</span></span><br><span class="line">    unit_nb = *extradata++ &amp; <span class="number">0x1f</span>; <span class="comment">/* number of sps unit(s) */</span></span><br><span class="line">    <span class="keyword">if</span> (!unit_nb)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">goto</span> pps;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        sps_offset = <span class="number">0</span>;</span><br><span class="line">        sps_seen = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (unit_nb--)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span> err;</span><br><span class="line"></span><br><span class="line">        unit_size = AV_RB16(extradata);</span><br><span class="line">        total_size += unit_size + <span class="number">4</span>;</span><br><span class="line">        <span class="keyword">if</span> (total_size &gt; INT_MAX - padding)</span><br><span class="line">        &#123;</span><br><span class="line">            av_log(<span class="literal">NULL</span>, AV_LOG_ERROR,</span><br><span class="line">                   <span class="string">"Too big extradata size, corrupted stream or invalid MP4/AVCC bitstream\n"</span>);</span><br><span class="line">            av_free(out);</span><br><span class="line">            <span class="keyword">return</span> AVERROR(EINVAL);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (extradata + <span class="number">2</span> + unit_size &gt; codec_extradata + codec_extradata_size)</span><br><span class="line">        &#123;</span><br><span class="line">            av_log(<span class="literal">NULL</span>, AV_LOG_ERROR, <span class="string">"Packet header is not contained in global extradata, "</span></span><br><span class="line">                                       <span class="string">"corrupted stream or invalid MP4/AVCC bitstream\n"</span>);</span><br><span class="line">            av_free(out);</span><br><span class="line">            <span class="keyword">return</span> AVERROR(EINVAL);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> ((err = av_reallocp(&amp;out, total_size + padding)) &lt; <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span> err;</span><br><span class="line">        <span class="built_in">memcpy</span>(out + total_size - unit_size - <span class="number">4</span>, nalu_header, <span class="number">4</span>);</span><br><span class="line">        <span class="built_in">memcpy</span>(out + total_size - unit_size, extradata + <span class="number">2</span>, unit_size);</span><br><span class="line">        extradata += <span class="number">2</span> + unit_size;</span><br><span class="line">    pps:</span><br><span class="line">        <span class="keyword">if</span> (!unit_nb &amp;&amp; !sps_done++)</span><br><span class="line">        &#123;</span><br><span class="line">            unit_nb = *extradata++; <span class="comment">/* number of pps unit(s) */</span></span><br><span class="line">            <span class="keyword">if</span> (unit_nb)</span><br><span class="line">            &#123;</span><br><span class="line">                pps_offset = total_size;</span><br><span class="line">                pps_seen = <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (out)</span><br><span class="line">        <span class="built_in">memset</span>(out + total_size, <span class="number">0</span>, padding);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!sps_seen)</span><br><span class="line">        av_log(<span class="literal">NULL</span>, AV_LOG_WARNING,</span><br><span class="line">               <span class="string">"Warning: SPS NALU missing or invalid. "</span></span><br><span class="line">               <span class="string">"The resulting stream may not play.\n"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!pps_seen)</span><br><span class="line">        av_log(<span class="literal">NULL</span>, AV_LOG_WARNING,</span><br><span class="line">               <span class="string">"Warning: PPS NALU missing or invalid. "</span></span><br><span class="line">               <span class="string">"The resulting stream may not play.\n"</span>);</span><br><span class="line"></span><br><span class="line">    out_extradata-&gt;data = out;</span><br><span class="line">    out_extradata-&gt;size = total_size;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> length_size;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol start="3">
+<li><p>为每一帧数据增加特征码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">alloc_and_copy</span><span class="params">(AVPacket *out,</span></span></span><br><span class="line"><span class="function"><span class="params">                          <span class="keyword">const</span> <span class="keyword">uint8_t</span> *sps_pps, <span class="keyword">uint32_t</span> sps_pps_size,</span></span></span><br><span class="line"><span class="function"><span class="params">                          <span class="keyword">const</span> <span class="keyword">uint8_t</span> *in, <span class="keyword">uint32_t</span> in_size)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">uint32_t</span> offset = out-&gt;size;</span><br><span class="line">    <span class="keyword">uint8_t</span> nal_header_size = offset ? <span class="number">3</span> : <span class="number">4</span>;</span><br><span class="line">    <span class="keyword">int</span> err;</span><br><span class="line"></span><br><span class="line">    err = av_grow_packet(out, sps_pps_size + in_size + nal_header_size);</span><br><span class="line">    <span class="keyword">if</span> (err &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> err;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (sps_pps)</span><br><span class="line">        <span class="built_in">memcpy</span>(out-&gt;data + offset, sps_pps, sps_pps_size);</span><br><span class="line">    <span class="built_in">memcpy</span>(out-&gt;data + sps_pps_size + nal_header_size + offset, in, in_size);</span><br><span class="line">    <span class="keyword">if</span> (!offset)</span><br><span class="line">    &#123;</span><br><span class="line">        AV_WB32(out-&gt;data + sps_pps_size, <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        (out-&gt;data + offset + sps_pps_size)[<span class="number">0</span>] =</span><br><span class="line">            (out-&gt;data + offset + sps_pps_size)[<span class="number">1</span>] = <span class="number">0</span>;</span><br><span class="line">        (out-&gt;data + offset + sps_pps_size)[<span class="number">2</span>] = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/05/如何对图片进行缓存/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zhujiaqqq">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zhujiaqqq Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/09/05/如何对图片进行缓存/" itemprop="url">如何对图片进行缓存</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-05T21:17:54+08:00">
+                2019-09-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="设计缓存算法的时候需要考虑"><a href="#设计缓存算法的时候需要考虑" class="headerlink" title="设计缓存算法的时候需要考虑"></a>设计缓存算法的时候需要考虑</h3><ul>
+<li>哪些应该保存</li>
+<li>哪些应该丢弃</li>
+<li>什么时候丢弃</li>
+<li>获取数据的成本和缓存数据的成本</li>
+<li>缓存价值（命中率）</li>
+</ul>
+<h4 id="LRU（Least-Recently-Used）算法的实现"><a href="#LRU（Least-Recently-Used）算法的实现" class="headerlink" title="LRU（Least Recently Used）算法的实现"></a>LRU（Least Recently Used）算法的实现</h4><ul>
+<li>LRU内部包含一个LinkedHashMap</li>
+<li>统计监控（额外的开销，可以监控算法的有效性）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> putCount;<span class="comment">//放入个数</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> createCount;<span class="comment">//创建个数</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> evictionCount;<span class="comment">//弹出个数</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> hitCount;<span class="comment">//命中个数</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> missCount;<span class="comment">//没命中个数</span></span><br></pre></td></tr></table></figure>
+<h4 id="LFU（Least-Frequently-Used）"><a href="#LFU（Least-Frequently-Used）" class="headerlink" title="LFU（Least Frequently Used）"></a>LFU（Least Frequently Used）</h4>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/03/如何避免OOM产生/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1576,379 +1909,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/21/Java Native方法与Native函数怎么绑定的/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Zhujiaqqq">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zhujiaqqq Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/08/21/Java Native方法与Native函数怎么绑定的/" itemprop="url">Native方法与Native函数怎么绑定的</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-21T21:53:00+08:00">
-                2019-08-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h4 id="如何绑定"><a href="#如何绑定" class="headerlink" title="如何绑定"></a>如何绑定</h4><ul>
-<li><p>静态绑定：通过命名规则映射</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.nativec;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NativeCInf</span></span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">callNativeStatic</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="string">"C"</span> JNIEXPORT <span class="keyword">void</span> JNICALL</span><br><span class="line">Java_com_example_nativec_NativeCInf_callNativeStatic(JNIEnv *, jclass)</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>动态绑定：通过JNI函数注册</p>
-<ul>
-<li>动态绑定可以在任何时刻触发</li>
-<li>动态绑定之前根据静态规则查找Native函数</li>
-<li>动态绑定可以在绑定后的任意时刻取消</li>
-</ul>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">registerMethods</span><span class="params">(JNUEnv *env, <span class="keyword">const</span> <span class="keyword">char</span> *className, <span class="keyword">const</span> JNINativeMethod *methods, <span class="keyword">int</span> methodsLength)</span></span>&#123;</span><br><span class="line">  <span class="comment">//获取Class</span></span><br><span class="line">  jclass clazz = env -&gt; FindClass(className);</span><br><span class="line">  <span class="keyword">if</span>(clazz == <span class="literal">NULL</span>) <span class="keyword">return</span> JNI_ERR;</span><br><span class="line">  <span class="comment">//注册方法</span></span><br><span class="line">  <span class="keyword">if</span>((env -&gt; RegisterNative(clazz, methods, methodsLength)) &lt; <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> JNI_ERR;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> JNI_OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="动态和静态绑定对比"><a href="#动态和静态绑定对比" class="headerlink" title="动态和静态绑定对比"></a>动态和静态绑定对比</h4><table>
-<thead>
-<tr>
-<th></th>
-<th style="text-align:left">动态绑定</th>
-<th>静态绑定</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Native函数名</td>
-<td style="text-align:left">无需求</td>
-<td>按照固有规则编写且采用C的名称修饰规则</td>
-</tr>
-<tr>
-<td>Native函数可见性</td>
-<td style="text-align:left">无需求</td>
-<td>可见</td>
-</tr>
-<tr>
-<td>动态更换</td>
-<td style="text-align:left">可以</td>
-<td>不可以</td>
-</tr>
-<tr>
-<td>调用性能</td>
-<td style="text-align:left">无需查找</td>
-<td>有额外的查找开销</td>
-</tr>
-<tr>
-<td>开发体验</td>
-<td style="text-align:left">几乎无副作用</td>
-<td>重构代码时较为繁琐</td>
-</tr>
-<tr>
-<td>Android Studio支持</td>
-<td style="text-align:left">不能自动关联跳转</td>
-<td>自动关联JNI函数可跳转</td>
-</tr>
-</tbody>
-</table>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/20/ConcurrentHashMap如何支持并发访问/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Zhujiaqqq">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zhujiaqqq Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/08/20/ConcurrentHashMap如何支持并发访问/" itemprop="url">ConcurrentHashMap如何支持并发访问</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-20T22:04:03+08:00">
-                2019-08-20
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <ul>
-<li>CHM分段锁的Hash优化JDK6（之前分段不均匀）</li>
-<li>CHM分段锁懒加载JDK7</li>
-<li>CHM摒弃分段锁JDK8（通过hash(key)访问table，对单个table元素加锁）</li>
-</ul>
-<h4 id="CHM如何计数"><a href="#CHM如何计数" class="headerlink" title="CHM如何计数"></a>CHM如何计数</h4><ul>
-<li>JDK5-7基于段元素个数求和，二次不同就加锁</li>
-<li>JDK8引入CounterCell，本质上也是分段计数</li>
-</ul>
-<h4 id="CHM是弱一致性都"><a href="#CHM是弱一致性都" class="headerlink" title="CHM是弱一致性都"></a>CHM是弱一致性都</h4><ul>
-<li>添加元素后不一定马上能读到</li>
-<li>清空之后可能仍然会有元素</li>
-<li>遍历之前的段元素的变化会读到</li>
-<li>遍历之后的段元素变化读不到</li>
-<li>遍历时元素发生变化不抛异常</li>
-</ul>
-<h4 id="HashTable的问题"><a href="#HashTable的问题" class="headerlink" title="HashTable的问题"></a>HashTable的问题</h4><ul>
-<li>大锁：对HashTable对象加锁</li>
-<li>长锁：直接对方法加锁</li>
-<li>读写锁共用：只有一把锁，从头锁到尾</li>
-</ul>
-<h4 id="针对HashTable的优化，CHM的解法"><a href="#针对HashTable的优化，CHM的解法" class="headerlink" title="针对HashTable的优化，CHM的解法"></a>针对HashTable的优化，CHM的解法</h4><ul>
-<li>小锁：分段锁（5-7）、桶节点锁（8）</li>
-<li>短锁：先尝试获取，失败再加锁</li>
-<li>分离读写锁：读失败再加锁（5-7），volatile读CAS写（7-8）</li>
-</ul>
-<h4 id="如何进行锁优化"><a href="#如何进行锁优化" class="headerlink" title="如何进行锁优化"></a>如何进行锁优化</h4><ul>
-<li>长锁不如短锁</li>
-<li>大锁不如小锁</li>
-<li>公锁不如私锁</li>
-<li>嵌套锁不如扁平锁</li>
-<li>分离读写锁</li>
-<li>粗化高频锁</li>
-<li>消除无用锁</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1999,7 +1959,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-count">35</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2010,7 +1970,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -2021,7 +1981,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-count">46</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

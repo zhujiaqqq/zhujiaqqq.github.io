@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="FFmpeg,视频,C,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="SPS/PPS在ffmpeg的codec-&amp;gt;extradata中获取  加载ffmpeg的日志模块 123#include &amp;lt;libavutil/log.h&amp;gt;...av_log_set_level(AV_LOG_DEBUG);  注册所有编解码器 12/*register all formats and codec*/av_register_all();  打开视频文件并获取视频">
+<meta name="keywords" content="FFmpeg,视频,C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FFmpeg抽取视频数据">
+<meta property="og:url" content="http://yoursite.com/2019/09/22/FFmpeg抽取视频数据/index.html">
+<meta property="og:site_name" content="Zhujiaqqq Blog">
+<meta property="og:description" content="SPS/PPS在ffmpeg的codec-&amp;gt;extradata中获取  加载ffmpeg的日志模块 123#include &amp;lt;libavutil/log.h&amp;gt;...av_log_set_level(AV_LOG_DEBUG);  注册所有编解码器 12/*register all formats and codec*/av_register_all();  打开视频文件并获取视频">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-09-22T13:54:01.178Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="FFmpeg抽取视频数据">
+<meta name="twitter:description" content="SPS/PPS在ffmpeg的codec-&amp;gt;extradata中获取  加载ffmpeg的日志模块 123#include &amp;lt;libavutil/log.h&amp;gt;...av_log_set_level(AV_LOG_DEBUG);  注册所有编解码器 12/*register all formats and codec*/av_register_all();  打开视频文件并获取视频">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/22/FFmpeg抽取视频数据/">
+
+
+
+
+
+  <title>FFmpeg抽取视频数据 | Zhujiaqqq Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Zhujiaqqq Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/22/FFmpeg抽取视频数据/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zhujiaqqq">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zhujiaqqq Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">FFmpeg抽取视频数据</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-22T20:44:11+08:00">
+                2019-09-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/音视频/" itemprop="url" rel="index">
+                    <span itemprop="name">音视频</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>SPS/PPS在ffmpeg的codec-&gt;extradata中获取</p>
+<ol>
+<li><p>加载ffmpeg的日志模块</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;libavutil/log.h&gt;</span></span></span><br><span class="line">...</span><br><span class="line">av_log_set_level(AV_LOG_DEBUG);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>注册所有编解码器</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*register all formats and codec*/</span></span><br><span class="line">av_register_all();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>打开视频文件并获取视频文件上下文</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">AVFormatContext *fmt_ctx = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*open input media file, and allocate format context*/</span></span><br><span class="line"><span class="keyword">if</span>((err_code = avformat_open_input(&amp;fmt_ctx, src_filename, <span class="literal">NULL</span>, <span class="literal">NULL</span>)) &lt; <span class="number">0</span>)&#123;</span><br><span class="line">	av_strerror(err_code, errors, <span class="number">1024</span>);</span><br><span class="line">	av_log(<span class="literal">NULL</span>, AV_LOG_DEBUG, <span class="string">"Could not open source file: %s, %d(%s)\n"</span>,</span><br><span class="line">               src_filename,</span><br><span class="line">               err_code,</span><br><span class="line">               errors);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>打印视频详细信息</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*dump input information*/</span></span><br><span class="line">av_dump_format(fmt_ctx, <span class="number">0</span>, src_filename, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>生成一个空的数据包，用于接收视频包</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*initialize packet*/</span></span><br><span class="line">av_init_packet(&amp;pkt);</span><br><span class="line">pkt.data = <span class="literal">NULL</span>;</span><br><span class="line">pkt.size = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取视频流</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*find best video stream*/</span></span><br><span class="line">video_stream_index = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_VIDEO, <span class="number">-1</span>, <span class="number">-1</span>, <span class="literal">NULL</span>, <span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span> (video_stream_index &lt; <span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">	av_log(<span class="literal">NULL</span>, AV_LOG_ERROR, <span class="string">"Could not find %s stream in input file %s\n"</span>,  av_get_media_type_string(AVMEDIA_TYPE_VIDEO),src_filename);</span><br><span class="line">	<span class="keyword">return</span> AVERROR(EINVAL);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>循环读取视频流中的包，进行处理</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*read frames from media file*/</span></span><br><span class="line"><span class="keyword">while</span> (av_read_frame(fmt_ctx, &amp;pkt) &gt;= <span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">if</span> (pkt.stream_index == video_stream_index)</span><br><span class="line">&#123;</span><br><span class="line">   h264_mp4toannexb(fmt_ctx, &amp;pkt, dst_fd);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//release pkt-&gt;data</span></span><br><span class="line">av_packet_unref(&amp;pkt);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li><p>对包进行处理，提取帧数据进行写文件</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">h264_mp4toannexb</span><span class="params">(AVFormatContext *fmt_ctx, AVPacket *in, FILE *dst_fd)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    AVPacket *out = <span class="literal">NULL</span>;</span><br><span class="line">    AVPacket spspps_pkt;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> len;</span><br><span class="line">    <span class="keyword">uint8_t</span> unit_type;</span><br><span class="line">    <span class="keyword">int32_t</span> nal_size;</span><br><span class="line">    <span class="keyword">uint32_t</span> cumul_size = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">uint8_t</span> *buf;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">uint8_t</span> *buf_end;</span><br><span class="line">    <span class="keyword">int</span> buf_size;</span><br><span class="line">    <span class="keyword">int</span> ret = <span class="number">0</span>, i;</span><br><span class="line"></span><br><span class="line">    out = av_packet_alloc();</span><br><span class="line"></span><br><span class="line">    buf = in-&gt;data;</span><br><span class="line">    buf_size = in-&gt;size;</span><br><span class="line">    buf_end = in-&gt;data + in-&gt;size;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">    &#123;</span><br><span class="line">        ret = AVERROR(EINVAL);</span><br><span class="line">        <span class="keyword">if</span> (buf + <span class="number">4</span> <span class="comment">/*s-&gt;length_size*/</span> &gt; buf_end)</span><br><span class="line">            <span class="keyword">goto</span> fail;</span><br><span class="line">        <span class="comment">//一个AVPacket中存的可能是一帧也可能是多帧</span></span><br><span class="line">        <span class="comment">// nal_size是一个帧的具体大小，在帧的头部的前4个字节</span></span><br><span class="line">        <span class="keyword">for</span> (nal_size = <span class="number">0</span>, i = <span class="number">0</span>; i &lt; <span class="number">4</span> <span class="comment">/*s-&gt;length_size*/</span>; i++)</span><br><span class="line">            nal_size = (nal_size &lt;&lt; <span class="number">8</span>) | buf[i];</span><br><span class="line"></span><br><span class="line">        buf += <span class="number">4</span>; <span class="comment">/*s-&gt;length_size;*/</span></span><br><span class="line">        <span class="comment">//帧数据的第一个字节的后5位是这个帧的nal单元</span></span><br><span class="line">        <span class="comment">/* nal:     7 -&gt; sps</span></span><br><span class="line"><span class="comment">                    8 -&gt; pps</span></span><br><span class="line"><span class="comment">                    key frame -&gt; 5</span></span><br><span class="line"><span class="comment">                    normal frame -&gt; 1 */</span></span><br><span class="line">        unit_type = *buf &amp; <span class="number">0x1f</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (nal_size &gt; buf_end - buf || nal_size &lt; <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">goto</span> fail;</span><br><span class="line">        <span class="comment">/* prepend only to the first type 5 NAL unit of an IDR picture, if no sps/pps are already present */</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="comment">/*s-&gt;new_idr &amp;&amp; */</span> unit_type == <span class="number">5</span> <span class="comment">/*&amp;&amp; !s-&gt;idr_sps_seen &amp;&amp; !s-&gt;idr_pps_seen*/</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 关键帧，需要获取sps/pps数据，并重新修改视频宽高比等参数</span></span><br><span class="line">            h264_extradata_to_annexb(fmt_ctx-&gt;streams[in-&gt;stream_index]-&gt;codec-&gt;extradata,</span><br><span class="line">                                     fmt_ctx-&gt;streams[in-&gt;stream_index]-&gt;codec-&gt;extradata_size,</span><br><span class="line">                                     &amp;spspps_pkt,</span><br><span class="line">                                     AV_INPUT_BUFFER_PADDING_SIZE);</span><br><span class="line">            <span class="comment">// 为数据增加特征码</span></span><br><span class="line">            <span class="keyword">if</span> ((ret = alloc_and_copy(out,</span><br><span class="line">                                      spspps_pkt.data, spspps_pkt.size,</span><br><span class="line">                                      buf, nal_size)) &lt; <span class="number">0</span>)</span><br><span class="line">                <span class="keyword">goto</span> fail;</span><br><span class="line">            <span class="comment">/*s-&gt;new_idr = 0;*/</span></span><br><span class="line">            <span class="comment">/* if only SPS has been seen, also insert PPS */</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> ((ret = alloc_and_copy(out, <span class="literal">NULL</span>, <span class="number">0</span>, buf, nal_size)) &lt; <span class="number">0</span>)</span><br><span class="line">                <span class="keyword">goto</span> fail;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        len = fwrite(out-&gt;data, <span class="number">1</span>, out-&gt;size, dst_fd);</span><br><span class="line">        <span class="keyword">if</span> (len != out-&gt;size)</span><br><span class="line">        &#123;</span><br><span class="line">            av_log(<span class="literal">NULL</span>, AV_LOG_DEBUG, <span class="string">"warning, length of writed data isn't equal pkt.size(%d, %d)\n"</span>,</span><br><span class="line">                   len,</span><br><span class="line">                   out-&gt;size);</span><br><span class="line">        &#125;</span><br><span class="line">        fflush(dst_fd);</span><br><span class="line"></span><br><span class="line">    next_nal:</span><br><span class="line">        buf += nal_size;</span><br><span class="line">        cumul_size += nal_size + <span class="number">4</span>; <span class="comment">//s-&gt;length_size;</span></span><br><span class="line">    &#125; <span class="keyword">while</span> (cumul_size &lt; buf_size);</span><br><span class="line">fail:</span><br><span class="line">    av_packet_free(&amp;out);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+</ol>
+<ol start="2">
+<li><p>获取SPS/PPS数据</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">h264_extradata_to_annexb</span><span class="params">(<span class="keyword">const</span> <span class="keyword">uint8_t</span> *codec_extradata, <span class="keyword">const</span> <span class="keyword">int</span> codec_extradata_size, AVPacket *out_extradata, <span class="keyword">int</span> padding)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">uint16_t</span> unit_size;</span><br><span class="line">    <span class="keyword">uint64_t</span> total_size = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">uint8_t</span> *out = <span class="literal">NULL</span>, unit_nb, sps_done = <span class="number">0</span>,</span><br><span class="line">            sps_seen = <span class="number">0</span>, pps_seen = <span class="number">0</span>, sps_offset = <span class="number">0</span>, pps_offset = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">uint8_t</span> *extradata = codec_extradata + <span class="number">4</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">uint8_t</span> nalu_header[<span class="number">4</span>] = &#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>&#125;;</span><br><span class="line">    <span class="keyword">int</span> length_size = (*extradata++ &amp; <span class="number">0x3</span>) + <span class="number">1</span>; <span class="comment">// retrieve length coded size, 用于指示表示编码数据长度所需字节数</span></span><br><span class="line"></span><br><span class="line">    sps_offset = pps_offset = <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* retrieve sps and pps unit(s) */</span></span><br><span class="line">    unit_nb = *extradata++ &amp; <span class="number">0x1f</span>; <span class="comment">/* number of sps unit(s) */</span></span><br><span class="line">    <span class="keyword">if</span> (!unit_nb)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">goto</span> pps;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        sps_offset = <span class="number">0</span>;</span><br><span class="line">        sps_seen = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (unit_nb--)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span> err;</span><br><span class="line"></span><br><span class="line">        unit_size = AV_RB16(extradata);</span><br><span class="line">        total_size += unit_size + <span class="number">4</span>;</span><br><span class="line">        <span class="keyword">if</span> (total_size &gt; INT_MAX - padding)</span><br><span class="line">        &#123;</span><br><span class="line">            av_log(<span class="literal">NULL</span>, AV_LOG_ERROR,</span><br><span class="line">                   <span class="string">"Too big extradata size, corrupted stream or invalid MP4/AVCC bitstream\n"</span>);</span><br><span class="line">            av_free(out);</span><br><span class="line">            <span class="keyword">return</span> AVERROR(EINVAL);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (extradata + <span class="number">2</span> + unit_size &gt; codec_extradata + codec_extradata_size)</span><br><span class="line">        &#123;</span><br><span class="line">            av_log(<span class="literal">NULL</span>, AV_LOG_ERROR, <span class="string">"Packet header is not contained in global extradata, "</span></span><br><span class="line">                                       <span class="string">"corrupted stream or invalid MP4/AVCC bitstream\n"</span>);</span><br><span class="line">            av_free(out);</span><br><span class="line">            <span class="keyword">return</span> AVERROR(EINVAL);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> ((err = av_reallocp(&amp;out, total_size + padding)) &lt; <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span> err;</span><br><span class="line">        <span class="built_in">memcpy</span>(out + total_size - unit_size - <span class="number">4</span>, nalu_header, <span class="number">4</span>);</span><br><span class="line">        <span class="built_in">memcpy</span>(out + total_size - unit_size, extradata + <span class="number">2</span>, unit_size);</span><br><span class="line">        extradata += <span class="number">2</span> + unit_size;</span><br><span class="line">    pps:</span><br><span class="line">        <span class="keyword">if</span> (!unit_nb &amp;&amp; !sps_done++)</span><br><span class="line">        &#123;</span><br><span class="line">            unit_nb = *extradata++; <span class="comment">/* number of pps unit(s) */</span></span><br><span class="line">            <span class="keyword">if</span> (unit_nb)</span><br><span class="line">            &#123;</span><br><span class="line">                pps_offset = total_size;</span><br><span class="line">                pps_seen = <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (out)</span><br><span class="line">        <span class="built_in">memset</span>(out + total_size, <span class="number">0</span>, padding);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!sps_seen)</span><br><span class="line">        av_log(<span class="literal">NULL</span>, AV_LOG_WARNING,</span><br><span class="line">               <span class="string">"Warning: SPS NALU missing or invalid. "</span></span><br><span class="line">               <span class="string">"The resulting stream may not play.\n"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!pps_seen)</span><br><span class="line">        av_log(<span class="literal">NULL</span>, AV_LOG_WARNING,</span><br><span class="line">               <span class="string">"Warning: PPS NALU missing or invalid. "</span></span><br><span class="line">               <span class="string">"The resulting stream may not play.\n"</span>);</span><br><span class="line"></span><br><span class="line">    out_extradata-&gt;data = out;</span><br><span class="line">    out_extradata-&gt;size = total_size;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> length_size;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol start="3">
+<li><p>为每一帧数据增加特征码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">alloc_and_copy</span><span class="params">(AVPacket *out,</span></span></span><br><span class="line"><span class="function"><span class="params">                          <span class="keyword">const</span> <span class="keyword">uint8_t</span> *sps_pps, <span class="keyword">uint32_t</span> sps_pps_size,</span></span></span><br><span class="line"><span class="function"><span class="params">                          <span class="keyword">const</span> <span class="keyword">uint8_t</span> *in, <span class="keyword">uint32_t</span> in_size)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">uint32_t</span> offset = out-&gt;size;</span><br><span class="line">    <span class="keyword">uint8_t</span> nal_header_size = offset ? <span class="number">3</span> : <span class="number">4</span>;</span><br><span class="line">    <span class="keyword">int</span> err;</span><br><span class="line"></span><br><span class="line">    err = av_grow_packet(out, sps_pps_size + in_size + nal_header_size);</span><br><span class="line">    <span class="keyword">if</span> (err &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> err;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (sps_pps)</span><br><span class="line">        <span class="built_in">memcpy</span>(out-&gt;data + offset, sps_pps, sps_pps_size);</span><br><span class="line">    <span class="built_in">memcpy</span>(out-&gt;data + sps_pps_size + nal_header_size + offset, in, in_size);</span><br><span class="line">    <span class="keyword">if</span> (!offset)</span><br><span class="line">    &#123;</span><br><span class="line">        AV_WB32(out-&gt;data + sps_pps_size, <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        (out-&gt;data + offset + sps_pps_size)[<span class="number">0</span>] =</span><br><span class="line">            (out-&gt;data + offset + sps_pps_size)[<span class="number">1</span>] = <span class="number">0</span>;</span><br><span class="line">        (out-&gt;data + offset + sps_pps_size)[<span class="number">2</span>] = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/FFmpeg/" rel="tag"># FFmpeg</a>
+          
+            <a href="/tags/视频/" rel="tag"># 视频</a>
+          
+            <a href="/tags/C/" rel="tag"># C</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/05/如何对图片进行缓存/" rel="next" title="如何对图片进行缓存">
+                <i class="fa fa-chevron-left"></i> 如何对图片进行缓存
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Zhujiaqqq</p>
+              <p class="site-description motion-element" itemprop="description">Java Android Python Algorithm and Machine learning</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zhujiaqqq</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
