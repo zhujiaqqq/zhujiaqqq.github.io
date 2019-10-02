@@ -252,6 +252,181 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/02/JNI层动态注册Native方法/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zhujiaqqq">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zhujiaqqq Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/10/02/JNI层动态注册Native方法/" itemprop="url">JNI层动态注册Native方法</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-02T21:52:45+08:00">
+                2019-10-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Android中，通常创建native的方法是在java层写一个native的方法声明，然后通过Alt+enter进行自动生成jni的方法，或者在命令行中使用javah生成头问题然后对照头问题的函数名，在c文件中创建函数。这种属于静态注册方法，虽然在AS中使用非常方法，但是有一下几个弊端：</p>
+<ol>
+<li>在调用该方法时，有额外的查找方法的性能开销</li>
+<li>在后期需要重构代码时，jni中的函数名需要手动修改，比较麻烦</li>
+<li>在程序运行时，无法动态更换</li>
+</ol>
+<p>所以，在NDK开发时，可以使用动态注册Native方法来规避上面的问题。</p>
+<p>动态注册方法是通过jni中的JNI_OnLoad方法实现的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">JNIEXPORT jint JNICALL <span class="title">JNI_OnLoad</span><span class="params">(JavaVM* vm, <span class="keyword">void</span>* reserved)</span></span>;</span><br></pre></td></tr></table></figure>
+<p><code>JNI_OnLoad()</code>方法在虚拟机加载C库是被执行（当<code>System.loadLibrary(&quot;native-lib&quot;)</code>时）。</p>
+<p>在<code>JNI_OnLoad()</code>中使用</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">jint <span class="title">RegisterNatives</span><span class="params">(jclass clazz, <span class="keyword">const</span> JNINativeMethod* methods,</span></span></span><br><span class="line"><span class="function"><span class="params">      jint nMethods)</span></span></span><br></pre></td></tr></table></figure>
+<p>对native方法进行注册。<code>RegisterNatives()</code>中需要三个参数：</p>
+<ul>
+<li><p>clazz指的是native方法所在的类，可以使用env-&gt;FindClass()获取；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jclass clazz = env-&gt;FindClass(<span class="string">"com/example/jni/MainActivity"</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>methods指的是需要动态注册的方法（这是一个指向数组的指针）,<code>JNINativeMethod</code>是一个结构体：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span>* name;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span>* signature;</span><br><span class="line">    <span class="keyword">void</span>*       fnPtr;</span><br><span class="line">&#125; JNINativeMethod;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>name是java层的方法名；</li>
+<li>signature是方法的出参入参的类型</li>
+<li>fnPtr是jni层的函数指针</li>
+</ul>
+</li>
+<li><p>nMethods指的是需要动态注册的方法的个数，就是methods的长度：<code>sizeof(g_methods) / sizeof(g_methods[0])</code></p>
+</li>
+</ul>
+<hr>
+<p>最终的实现：</p>
+<p>Java层：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> String <span class="title">_test</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<p>jni层：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="string">"C"</span> JNIEXPORT jstring JNICALL</span><br><span class="line">my_jni_test(JNIEnv *env, jobject instance) &#123;</span><br><span class="line">    <span class="keyword">return</span> env-&gt;NewStringUTF(<span class="string">"this is a method"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> JNINativeMethod g_methods[] = &#123;</span><br><span class="line">        &#123;</span><br><span class="line">                <span class="string">"_test"</span>,</span><br><span class="line">                <span class="string">"()Ljava/lang/String;"</span>,</span><br><span class="line">                (<span class="keyword">void</span> *) my_jni_test</span><br><span class="line">        &#125;,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">jint <span class="title">JNI_OnLoad</span><span class="params">(JavaVM *vm, <span class="keyword">void</span> *reserved)</span> </span>&#123;</span><br><span class="line">    JNIEnv *env = <span class="literal">nullptr</span>;</span><br><span class="line">    vm-&gt;GetEnv((<span class="keyword">void</span> **) &amp;env, JNI_VERSION_1_6);</span><br><span class="line"></span><br><span class="line">    jclass clazz = env-&gt;FindClass(<span class="string">"com/example/jni/MainActivity"</span>);</span><br><span class="line"></span><br><span class="line">    env-&gt;RegisterNatives(clazz, g_methods, <span class="keyword">sizeof</span>(g_methods) / <span class="keyword">sizeof</span>(g_methods[<span class="number">0</span>]));</span><br><span class="line">    <span class="keyword">return</span> JNI_VERSION_1_6;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/22/FFmpeg抽取视频数据/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1731,184 +1906,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/22/Activity的启动流程/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Zhujiaqqq">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zhujiaqqq Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/08/22/Activity的启动流程/" itemprop="url">Activity的启动流程</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-22T22:29:45+08:00">
-                2019-08-22
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h4 id="Activity跨进程启动"><a href="#Activity跨进程启动" class="headerlink" title="Activity跨进程启动"></a>Activity跨进程启动</h4><ol>
-<li>请求进程A通过startActivity方法调用AMP</li>
-<li>system_server进程中的AMS执行：<ol>
-<li>解析Activity信息（androidManifest.xml）</li>
-<li>处理启动参数</li>
-<li>启动目标进程</li>
-<li>绑定新进程</li>
-<li>调用ATP（ApplicationThread代理）</li>
-</ol>
-</li>
-<li>目标进程B通过ApplicationThread调用ActivityThread，最终启动Activity的生命周期</li>
-</ol>
-<blockquote>
-<p>AMP -&gt; AMS 以及 ATP -&gt; ApplicationThread都是通过binder进行通信的</p>
-</blockquote>
-<h4 id="Activity进程内启动"><a href="#Activity进程内启动" class="headerlink" title="Activity进程内启动"></a>Activity进程内启动</h4><ol>
-<li>请求进程A通过startActivity方法调用AMP</li>
-<li>system_server进程中的AMS执行：<ol>
-<li>解析Activity信息（androidManifest.xml）</li>
-<li>处理启动参数</li>
-<li>调用ATP（ApplicationThread代理）</li>
-</ol>
-</li>
-<li>进程A过ApplicationThread调用ActivityThread，最终启动Activity的生命周期</li>
-</ol>
-<h4 id="Activity的参数传递"><a href="#Activity的参数传递" class="headerlink" title="Activity的参数传递"></a>Activity的参数传递</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">请求进程A的Bundle -- Binder缓冲区  --&gt; system_server进程的Bundle</span><br></pre></td></tr></table></figure>
-<ul>
-<li>大小受缓冲区大小限制</li>
-<li>数据必须可以序列化</li>
-</ul>
-<p>解决办法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">ActivityA的Bundle -- Binder缓冲区-key --&gt; ActivityB的Bundle</span><br><span class="line">ActivityA的Bundle -- setData --&gt; Model-data</span><br><span class="line">Model-data -- getData --&gt; ActivityB的Bundle</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>Activity之间的数据传递不能太大</p>
-</blockquote>
-<h4 id="Activity实例化"><a href="#Activity实例化" class="headerlink" title="Activity实例化"></a>Activity实例化</h4><p>通过反射newInstance实现，所以不能对Activity添加构造方法。</p>
-<p>同理，fragment也一样。</p>
-<h4 id="Activity的窗口如何展示"><a href="#Activity的窗口如何展示" class="headerlink" title="Activity的窗口如何展示"></a>Activity的窗口如何展示</h4><h4 id="Activity转场动画的实现机制"><a href="#Activity转场动画的实现机制" class="headerlink" title="Activity转场动画的实现机制"></a>Activity转场动画的实现机制</h4>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1959,7 +1956,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-count">36</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1981,7 +1978,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-count">48</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
