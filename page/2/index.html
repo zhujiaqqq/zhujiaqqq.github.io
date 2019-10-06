@@ -252,6 +252,179 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/24/如何跨App启动Activity/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zhujiaqqq">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zhujiaqqq Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/08/24/如何跨App启动Activity/" itemprop="url">如何跨App启动Activity</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-24T20:38:54+08:00">
+                2019-08-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">AppA的ActivityA -- 启动 --&gt; AppB的ActivityB</span><br></pre></td></tr></table></figure>
+<ul>
+<li><h4 id="共享uid的App"><a href="#共享uid的App" class="headerlink" title="共享uid的App"></a>共享uid的App</h4></li>
+</ul>
+<p>在AndroidManifest中：<code>manifest</code>标签中添加<code>android:sharedUserId=&quot;xxxx&quot;</code></p>
+<p>启动时：<code>startActivity(new Intent().setComponent(new ComponentName(&quot;com.example.zhu&quot;,&quot;com.example.zhu.XxxActivity&quot;)));</code></p>
+<ul>
+<li><h4 id="使用exported"><a href="#使用exported" class="headerlink" title="使用exported"></a>使用exported</h4></li>
+</ul>
+<p>在Manifest中添加exported属性<code>&lt;activity android:name=&quot;.BActivity&quot; android:exported=&quot;true&quot;/&gt;</code></p>
+<p>启动时：<code>startActivity(new Intent().setComponent(new ComponentName(&quot;com.example.zhu&quot;,&quot;com.example.zhu.XxxActivity&quot;)));</code></p>
+<ul>
+<li><h4 id="使用intentFilter-隐式跳转"><a href="#使用intentFilter-隐式跳转" class="headerlink" title="使用intentFilter(隐式跳转)"></a>使用intentFilter(隐式跳转)</h4></li>
+</ul>
+<p>在Manifest的Activity标签中添加：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">"android.intent.action.TEST"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">category</span> <span class="attr">android:name</span>=<span class="string">"android.intent.category.DEFAULT"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>启动时：<code>startActivity(new Intent(&quot;android.intent.action.TEST&quot;))</code></p>
+<hr>
+<h4 id="Activity加权限"><a href="#Activity加权限" class="headerlink" title="Activity加权限"></a>Activity加权限</h4><ol>
+<li><p>给AppA的manifest中添加权限：</p>
+<p><code>&lt;uses-permission android:name=&quot;com.example.zhu&quot;/&gt;</code></p>
+</li>
+<li><p>gei AppB中需要启动的Activity添加permission属性：</p>
+<p><code>android:permission=&quot;com.example.zhu&quot;</code></p>
+</li>
+<li><p>启动时：使用隐式跳转</p>
+</li>
+</ol>
+<blockquote>
+<p>这种添加权限的方法必须要AppB先安装，否则AppA无法获取权限</p>
+</blockquote>
+<h4 id="拒绝服务漏洞"><a href="#拒绝服务漏洞" class="headerlink" title="拒绝服务漏洞"></a>拒绝服务漏洞</h4><p>在被启动的Activity中，<code>getIntent().getExtras()</code>获取的bundle对象中如果有的序列化数据，无法被反序列化成对象，程序就会崩溃（报找不到反序列化对象的exception），此时需要对bundle的操作加try-catch。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/22/Activity的启动流程/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1363,135 +1536,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/08/组件化/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Zhujiaqqq">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zhujiaqqq Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/07/08/组件化/" itemprop="url">组件化</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-08T10:27:27+08:00">
-                2019-07-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>组件化需要考虑的问题：</p>
-<ul>
-<li>代码解耦</li>
-<li>组件单独运行</li>
-<li>数据传递</li>
-<li>UI跳转</li>
-<li>组件的生命周期</li>
-<li>集成调试</li>
-<li>代码隔离</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/29/并发和并行的区别/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1987,7 +2031,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">48</span>
+                  <span class="site-state-item-count">51</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
