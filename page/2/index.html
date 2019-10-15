@@ -252,6 +252,148 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/24/如何解决Activity参数的类型安全及接口繁琐的问题/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zhujiaqqq">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zhujiaqqq Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/08/24/如何解决Activity参数的类型安全及接口繁琐的问题/" itemprop="url">如何解决Activity参数的类型安全及接口繁琐的问题</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-24T21:30:06+08:00">
+                2019-08-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <ul>
+<li>类型安全：Bundle的K-V不能在编译期保证类型</li>
+<li>接口繁琐：启动Activity 时参数和结果传递都依赖Intent</li>
+</ul>
+<h4 id="onActivityResult为什么麻烦"><a href="#onActivityResult为什么麻烦" class="headerlink" title="onActivityResult为什么麻烦"></a>onActivityResult为什么麻烦</h4><ol>
+<li>代码处理逻辑分离，容易出现遗漏和不一致的问题</li>
+<li><code>setResult（）</code>写法不够直观，结果数据没有类型安全保障</li>
+<li>结果种类较多时，onActivityResult就会逐渐臃肿难以维护</li>
+</ol>
+<h4 id="为什么Activity的参数存在类型安全问题"><a href="#为什么Activity的参数存在类型安全问题" class="headerlink" title="为什么Activity的参数存在类型安全问题"></a>为什么Activity的参数存在类型安全问题</h4><p><code>intent.putExtra()</code>时和<code>getIntent.getXxxExtra()</code>时需要人工去保证类型安全</p>
+<hr>
+<h3 id="如何实现类型安全"><a href="#如何实现类型安全" class="headerlink" title="如何实现类型安全"></a>如何实现类型安全</h3><ul>
+<li><p>注解处理器生成Builder</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Builder</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span></span>&#123;</span><br><span class="line">	<span class="meta">@Required</span></span><br><span class="line">	String name;</span><br><span class="line">	<span class="meta">@Required</span></span><br><span class="line">	<span class="keyword">int</span> age;</span><br><span class="line">	<span class="meta">@Optional</span></span><br><span class="line">	String title;</span><br><span class="line">	<span class="meta">@Optional</span></span><br><span class="line">	String company;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">UserActivityBuilder.builder(age, name)</span><br><span class="line">	.title(title)</span><br><span class="line">	.company(company);</span><br></pre></td></tr></table></figure>
+<p>通过注解处理器生成注入逻辑</p>
+</li>
+</ul>
+<h4 id="注解处理器程序的开发注意事项"><a href="#注解处理器程序的开发注意事项" class="headerlink" title="注解处理器程序的开发注意事项"></a>注解处理器程序的开发注意事项</h4><ul>
+<li>注意注解标注的类的继承关系</li>
+<li>注意注解标注的类为内部类的情况</li>
+<li>注意kotlin与java的类型映射的问题</li>
+<li>把握好代码生成和直接依赖的边界</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/24/如何跨App启动Activity/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1839,126 +1981,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/27/ThreadPoolExecutor/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Zhujiaqqq">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zhujiaqqq Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/06/27/ThreadPoolExecutor/" itemprop="url">ThreadPoolExecutor</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-27T10:02:01+08:00">
-                2019-06-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newFixedThreadPool</span><span class="params">(<span class="keyword">int</span> nThreads)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(nThreads, nThreads,</span><br><span class="line">                                      <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                                      <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;());</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2009,7 +2031,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-count">37</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2031,7 +2053,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">51</span>
+                  <span class="site-state-item-count">52</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
