@@ -252,6 +252,205 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/17/Java集合类/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zhujiaqqq">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zhujiaqqq Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/10/17/Java集合类/" itemprop="url">Java集合类</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-17T19:06:42+08:00">
+                2019-10-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Java的集合主要分为三大块：</p>
+<ul>
+<li>List</li>
+<li>Map</li>
+<li>Set</li>
+</ul>
+<hr>
+<h2 id="List"><a href="#List" class="headerlink" title="List"></a>List</h2><p><strong>常用的List类有：ArrayList、LinkedList</strong></p>
+<p>List接口需要实现一下方法：</p>
+<p><img src="https://raw.githubusercontent.com/zhujiaqqq/daily-pic/master/img/20191017191101.png" alt></p>
+<h3 id="ArrayList"><a href="#ArrayList" class="headerlink" title="ArrayList"></a>ArrayList</h3><ul>
+<li><p>ArrayList的默认容量为10</p>
+</li>
+<li><p>每次扩容会变为之前的1.5倍</p>
+</li>
+<li><p>ArrayList中的数据减少时，容量不会减少</p>
+</li>
+<li><p>ArrayList存储元素使用数组：</p>
+<p><code>transient Object[] elementData;</code></p>
+</li>
+<li><p>ArrayList中的size指的是集合中元素的个数：</p>
+<p><code>private int size;</code></p>
+</li>
+<li><p>ArrayList通过索引访问元素很快，时间复杂度为O(1)：</p>
+<p><code>public E get(int index)</code></p>
+</li>
+<li><p>ArrayList在尾部插入元素，时间复杂度为O(1)：</p>
+<p><code>public boolean add(E e)</code></p>
+</li>
+<li><p>ArrayList在尾部删除元素，时间复杂度为O(1)：</p>
+<p><code>public E remove(int index)</code> <strong>index为size-1时</strong></p>
+</li>
+<li><p>ArrayList从中间插入元素，需要搬移元素，平均时间复杂度为O(n)：</p>
+<p><code>public void add(int index, E element)</code></p>
+</li>
+<li><p>ArrayList从中间删除元素，需要搬移元素，平均时间复杂度为O(n)：</p>
+<p><code>public E remove(int index)</code></p>
+</li>
+<li><p>ArrayList可以求并集、交集、单向差集</p>
+<ul>
+<li>public boolean addAll(Collection&lt;? extends E&gt; c)</li>
+</ul>
+</li>
+<li><p>public boolean retainAll(Collection&lt;?&gt; c)</p>
+<ul>
+<li>public boolean removeAll(Collection&lt;?&gt; c)</li>
+</ul>
+</li>
+<li><p>为什么ArrayList中存储元素的数组elementData是被transient的？</p>
+<p><strong>因为ArrayList中的elementData是可以扩容的，但是它的长度可能大于或等于实际元素的个数，如果，在序列化的时候将elementData自动序列化，那么会有多个空元素被序列化到磁盘中，所有源码中使用transient禁止序列化，并且在<code>private void writeObject(java.io.ObjectOutputStream s)</code>中通过size的个数对元素进行序列化</strong></p>
+</li>
+</ul>
+<hr>
+<h3 id="LinkedList"><a href="#LinkedList" class="headerlink" title="LinkedList"></a>LinkedList</h3><ul>
+<li>LinkedList继承了Queue接口，实现队列的功能</li>
+<li>LinkedList继承了Deque接口，实现双端队列的功能（队列、栈）</li>
+<li>LinkedList内部使用双向链表实现List的功能</li>
+<li>LinkedList没有实现RandomAccess接口，所以访问非队列首尾的元素比较低效</li>
+<li>LinkedList中用size记录元素个数，并有链表首节点first和链表尾节点last</li>
+<li>LinkedList在队列首尾添加、删除元素效率高，时间复杂度为O(1)：<ul>
+<li><code>private void linkFirst(E e)</code></li>
+<li><code>void linkLast(E e)</code></li>
+<li><code>private E unlinkFirst(Node&lt;E&gt; f)</code></li>
+<li><code>private E unlinkLast(Node&lt;E&gt; l)</code></li>
+</ul>
+</li>
+<li>LinkedList在中间添加、删除元素效率低，时间复杂度为O(n)：<ul>
+<li><code>public void add(int index, E element)</code></li>
+<li><code>public E remove(int index)</code></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h2><p>常用的Map有：</p>
+<ul>
+<li>HashMap</li>
+<li>LinkedHashMap</li>
+<li>ConcurrentHashMap/HashTable</li>
+<li>TreeMap</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/15/Java的GC机制/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1804,182 +2003,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/25/如何实现类似微信右滑返回的效果/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Zhujiaqqq">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zhujiaqqq Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/08/25/如何实现类似微信右滑返回的效果/" itemprop="url">如何实现类似微信右滑返回的效果</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-25T16:14:43+08:00">
-                2019-08-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h4 id="Fragment的实现"><a href="#Fragment的实现" class="headerlink" title="Fragment的实现"></a>Fragment的实现</h4><ul>
-<li>对于Fragment的控制相对简单</li>
-<li>不涉及window的控制，只是View级别的操作</li>
-<li>实现View跟随手势滑动移动的效果</li>
-<li>实现手势结束后判断取消或返回执行归位动画</li>
-</ul>
-<h4 id="Activity的实现"><a href="#Activity的实现" class="headerlink" title="Activity的实现"></a>Activity的实现</h4><ul>
-<li><p>处理好window的控制</p>
-<ul>
-<li><p>修改activity的style属性：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span> <span class="attr">name</span>=<span class="string">"AppTranslucentTheme"</span> <span class="attr">parent</span>=<span class="string">"AppTheme"</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="xml">	<span class="tag">&lt;<span class="name">item</span> <span class="attr">name</span>=<span class="string">"android:windowBackground"</span>&gt;</span>@android:color/transparent<span class="tag">&lt;/<span class="name">item</span>&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">item</span> <span class="attr">name</span>=<span class="string">"android:windowIsTranslucent"</span>&gt;</span>true<span class="tag">&lt;/<span class="name">item</span>&gt;</span></span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li><p>Activity联动（多个activity栈）</p>
-<blockquote>
-<p>Activity A和Activity C在Task#0</p>
-</blockquote>
-<p>  Activity B在Task#1</p>
-<p>  当Activity A跳转Activity B时没有问题（有动画效果）</p>
-<p>  再当Activity B跳转Activity C时，会先出现Activity A，然后动画效果到Activity C</p>
-<p>处理方法：再Activity B跳转Activity C的时候将B页面整体截屏放到Activity C的下面。</p>
-<p>获取Activity的栈：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Activity.java</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getTaskId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> ActivityManager.getService()</span><br><span class="line">            .getTaskForActivity(mToken, <span class="keyword">false</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="Activity透明对生命周期的影响"><a href="#Activity透明对生命周期的影响" class="headerlink" title="Activity透明对生命周期的影响"></a>Activity透明对生命周期的影响</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">graph TB</span><br><span class="line">Created -- onStart --&gt; Started</span><br><span class="line">Started -- onResume --&gt; Resumed</span><br><span class="line">Resumed -- onPause --&gt;Started</span><br><span class="line">Started -- onStop --&gt; Created</span><br></pre></td></tr></table></figure>
-<p>A、B、C、D四个Activity依次跳转，此时Activity栈中：A-&gt;B-&gt;C-&gt;D。（默认都不透明）</p>
-<ul>
-<li>如果D为不透明Activity，那么：D为Resumed状态（可操作），ABC为Created状态（不可见）。</li>
-<li>如果D为透明Activity，那么：D为Resumed状态（可操作），C为Started状态（可见，不可操作），AB为Created状态（不可见）</li>
-<li>如果C、D为透明Activity，那么：：D为Resumed状态（可操作），B、C为Started状态（可见，不可操作），A为Created状态（不可见）</li>
-</ul>
-<h4 id="实现滑动返回接口"><a href="#实现滑动返回接口" class="headerlink" title="实现滑动返回接口"></a>实现滑动返回接口</h4>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2030,7 +2053,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-count">38</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="View,ViewGroup,Window,">
+  <meta name="keywords" content="Hexo, NexT">
 
 
 
@@ -79,18 +79,19 @@
 
 
 
-<meta name="description" content="获取当前Activity使用ActivityLifecycleCallbacks回调获取create的Activity对象 添加View使用Activity.addContentView(View view, ViewGroup.LayoutParams params) 移除View：Activity.removeContentView(View view) 将Content获取，在Content">
-<meta name="keywords" content="View,ViewGroup,Window">
+<meta name="description" content="Java的集合主要分为三大块：  List Map Set   List常用的List类有：ArrayList、LinkedList List接口需要实现一下方法：  ArrayList ArrayList的默认容量为10  每次扩容会变为之前的1.5倍  ArrayList中的数据减少时，容量不会减少  ArrayList存储元素使用数组： transient Object[] elementD">
 <meta property="og:type" content="article">
-<meta property="og:title" content="如何在代码的任意位置为当前Activity添加View">
-<meta property="og:url" content="http://yoursite.com/2019/05/25/如何在代码的任意位置为当前Activity添加View/index.html">
+<meta property="og:title" content="Java集合类">
+<meta property="og:url" content="http://yoursite.com/2019/10/17/Java集合类/index.html">
 <meta property="og:site_name" content="Zhujiaqqq Blog">
-<meta property="og:description" content="获取当前Activity使用ActivityLifecycleCallbacks回调获取create的Activity对象 添加View使用Activity.addContentView(View view, ViewGroup.LayoutParams params) 移除View：Activity.removeContentView(View view) 将Content获取，在Content">
+<meta property="og:description" content="Java的集合主要分为三大块：  List Map Set   List常用的List类有：ArrayList、LinkedList List接口需要实现一下方法：  ArrayList ArrayList的默认容量为10  每次扩容会变为之前的1.5倍  ArrayList中的数据减少时，容量不会减少  ArrayList存储元素使用数组： transient Object[] elementD">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-09-01T12:48:55.985Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/zhujiaqqq/daily-pic/master/img/20191017191101.png">
+<meta property="og:updated_time" content="2019-10-17T12:24:03.839Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="如何在代码的任意位置为当前Activity添加View">
-<meta name="twitter:description" content="获取当前Activity使用ActivityLifecycleCallbacks回调获取create的Activity对象 添加View使用Activity.addContentView(View view, ViewGroup.LayoutParams params) 移除View：Activity.removeContentView(View view) 将Content获取，在Content">
+<meta name="twitter:title" content="Java集合类">
+<meta name="twitter:description" content="Java的集合主要分为三大块：  List Map Set   List常用的List类有：ArrayList、LinkedList List接口需要实现一下方法：  ArrayList ArrayList的默认容量为10  每次扩容会变为之前的1.5倍  ArrayList中的数据减少时，容量不会减少  ArrayList存储元素使用数组： transient Object[] elementD">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/zhujiaqqq/daily-pic/master/img/20191017191101.png">
 
 
 
@@ -120,13 +121,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/05/25/如何在代码的任意位置为当前Activity添加View/">
+  <link rel="canonical" href="http://yoursite.com/2019/10/17/Java集合类/">
 
 
 
 
 
-  <title>如何在代码的任意位置为当前Activity添加View | Zhujiaqqq Blog</title>
+  <title>Java集合类 | Zhujiaqqq Blog</title>
   
 
 
@@ -253,7 +254,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/25/如何在代码的任意位置为当前Activity添加View/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/17/Java集合类/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Zhujiaqqq">
@@ -270,7 +271,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">如何在代码的任意位置为当前Activity添加View</h1>
+          <h1 class="post-title" itemprop="name headline">Java集合类</h1>
         
 
         <div class="post-meta">
@@ -282,8 +283,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-25T15:34:59+08:00">
-                2019-05-25
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-17T19:06:42+08:00">
+                2019-10-17
               </time>
             
 
@@ -292,28 +293,6 @@
             
           </span>
 
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
           
 
           
@@ -342,24 +321,86 @@
       
 
       
-        <h4 id="获取当前Activity"><a href="#获取当前Activity" class="headerlink" title="获取当前Activity"></a>获取当前Activity</h4><p>使用ActivityLifecycleCallbacks回调获取create的Activity对象</p>
-<h4 id="添加View"><a href="#添加View" class="headerlink" title="添加View"></a>添加View</h4><p>使用<code>Activity.addContentView(View view, ViewGroup.LayoutParams params)</code></p>
-<p>移除View：<code>Activity.removeContentView(View view)</code></p>
-<p>将Content获取，在Content中手动添加View：</p>
-<blockquote>
-<p>Content view 的ID为：<code>android:id/content</code></p>
-</blockquote>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ActivityExt</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Activity mActivity;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ViewGroup mViewGroup;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ActivityExt</span><span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">        mActivity = activity;</span><br><span class="line">        mViewGroup = activity.findViewById(android.R.id.content);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addContentView</span><span class="params">(View view, ViewGroup.LayoutParams params)</span> </span>&#123;</span><br><span class="line">        mViewGroup.addView(view, params);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">removeContentView</span><span class="params">(View view)</span> </span>&#123;</span><br><span class="line">        mViewGroup.removeView(view);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="在整个屏幕中添加View"><a href="#在整个屏幕中添加View" class="headerlink" title="在整个屏幕中添加View"></a>在整个屏幕中添加View</h4><p>上面说的addContentView是在Content中添加View，有一定的局限性，如果想在整个屏幕中添加View，不如说水印、护眼壁纸等，就需要将content上面的actionBar、stateBar也添加View。</p>
-<p>整个屏幕中能看见的部分都来自一个总的view——<code>DecorView</code></p>
+        <p>Java的集合主要分为三大块：</p>
 <ul>
-<li>获取DecorView：<code>FrameLayout decorView = (FrameLayout) getWindow().getDecorView();</code></li>
-<li>DecorView是一个FrameLayout，在里面直接<code>addView(View view, ViewGroup.LayoutParams params)</code>就可以添加View。</li>
+<li>List</li>
+<li>Map</li>
+<li>Set</li>
 </ul>
-<blockquote>
-<p>添加的View在整个FrameLayout布局的最上层，覆盖在Content的上面。如果添加的View有事件拦截的话，正常显示的Activity将无法获取事件消息。</p>
-</blockquote>
-<h4 id="添加View的需求评估"><a href="#添加View的需求评估" class="headerlink" title="添加View的需求评估"></a>添加View的需求评估</h4><p>一般情况下，在Activity中手动添加View都是对整个app的页面统一添加，所以在需求评估时候需要确认使用场景，给出合理的方案，大型的app页面众多，不同的开发者为实现不同的效果，可能会对页面做不同的修改，全局添加的view在部分页面会出现崩溃。</p>
+<hr>
+<h2 id="List"><a href="#List" class="headerlink" title="List"></a>List</h2><p><strong>常用的List类有：ArrayList、LinkedList</strong></p>
+<p>List接口需要实现一下方法：</p>
+<p><img src="https://raw.githubusercontent.com/zhujiaqqq/daily-pic/master/img/20191017191101.png" alt></p>
+<h3 id="ArrayList"><a href="#ArrayList" class="headerlink" title="ArrayList"></a>ArrayList</h3><ul>
+<li><p>ArrayList的默认容量为10</p>
+</li>
+<li><p>每次扩容会变为之前的1.5倍</p>
+</li>
+<li><p>ArrayList中的数据减少时，容量不会减少</p>
+</li>
+<li><p>ArrayList存储元素使用数组：</p>
+<p><code>transient Object[] elementData;</code></p>
+</li>
+<li><p>ArrayList中的size指的是集合中元素的个数：</p>
+<p><code>private int size;</code></p>
+</li>
+<li><p>ArrayList通过索引访问元素很快，时间复杂度为O(1)：</p>
+<p><code>public E get(int index)</code></p>
+</li>
+<li><p>ArrayList在尾部插入元素，时间复杂度为O(1)：</p>
+<p><code>public boolean add(E e)</code></p>
+</li>
+<li><p>ArrayList在尾部删除元素，时间复杂度为O(1)：</p>
+<p><code>public E remove(int index)</code> <strong>index为size-1时</strong></p>
+</li>
+<li><p>ArrayList从中间插入元素，需要搬移元素，平均时间复杂度为O(n)：</p>
+<p><code>public void add(int index, E element)</code></p>
+</li>
+<li><p>ArrayList从中间删除元素，需要搬移元素，平均时间复杂度为O(n)：</p>
+<p><code>public E remove(int index)</code></p>
+</li>
+<li><p>ArrayList可以求并集、交集、单向差集</p>
+<ul>
+<li>public boolean addAll(Collection&lt;? extends E&gt; c)</li>
+</ul>
+</li>
+<li><p>public boolean retainAll(Collection&lt;?&gt; c)</p>
+<ul>
+<li>public boolean removeAll(Collection&lt;?&gt; c)</li>
+</ul>
+</li>
+<li><p>为什么ArrayList中存储元素的数组elementData是被transient的？</p>
+<p><strong>因为ArrayList中的elementData是可以扩容的，但是它的长度可能大于或等于实际元素的个数，如果，在序列化的时候将elementData自动序列化，那么会有多个空元素被序列化到磁盘中，所有源码中使用transient禁止序列化，并且在<code>private void writeObject(java.io.ObjectOutputStream s)</code>中通过size的个数对元素进行序列化</strong></p>
+</li>
+</ul>
+<hr>
+<h3 id="LinkedList"><a href="#LinkedList" class="headerlink" title="LinkedList"></a>LinkedList</h3><ul>
+<li>LinkedList继承了Queue接口，实现队列的功能</li>
+<li>LinkedList继承了Deque接口，实现双端队列的功能（队列、栈）</li>
+<li>LinkedList内部使用双向链表实现List的功能</li>
+<li>LinkedList没有实现RandomAccess接口，所以访问非队列首尾的元素比较低效</li>
+<li>LinkedList中用size记录元素个数，并有链表首节点first和链表尾节点last</li>
+<li>LinkedList在队列首尾添加、删除元素效率高，时间复杂度为O(1)：<ul>
+<li><code>private void linkFirst(E e)</code></li>
+<li><code>void linkLast(E e)</code></li>
+<li><code>private E unlinkFirst(Node&lt;E&gt; f)</code></li>
+<li><code>private E unlinkLast(Node&lt;E&gt; l)</code></li>
+</ul>
+</li>
+<li>LinkedList在中间添加、删除元素效率低，时间复杂度为O(n)：<ul>
+<li><code>public void add(int index, E element)</code></li>
+<li><code>public E remove(int index)</code></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h2><p>常用的Map有：</p>
+<ul>
+<li>HashMap</li>
+<li>LinkedHashMap</li>
+<li>ConcurrentHashMap/HashTable</li>
+<li>TreeMap</li>
+</ul>
 
       
     </div>
@@ -375,16 +416,6 @@
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/View/" rel="tag"># View</a>
-          
-            <a href="/tags/ViewGroup/" rel="tag"># ViewGroup</a>
-          
-            <a href="/tags/Window/" rel="tag"># Window</a>
-          
-        </div>
-      
 
       
       
@@ -394,8 +425,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/05/04/计数质数/" rel="next" title="计数质数">
-                <i class="fa fa-chevron-left"></i> 计数质数
+              <a href="/2019/10/15/Java的GC机制/" rel="next" title="Java的GC机制">
+                <i class="fa fa-chevron-left"></i> Java的GC机制
               </a>
             
           </div>
@@ -403,10 +434,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/05/26/合并两个有序链表/" rel="prev" title="合并两个有序链表">
-                合并两个有序链表 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -538,7 +565,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#获取当前Activity"><span class="nav-number">1.</span> <span class="nav-text">获取当前Activity</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#添加View"><span class="nav-number">2.</span> <span class="nav-text">添加View</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#在整个屏幕中添加View"><span class="nav-number">3.</span> <span class="nav-text">在整个屏幕中添加View</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#添加View的需求评估"><span class="nav-number">4.</span> <span class="nav-text">添加View的需求评估</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#List"><span class="nav-number">1.</span> <span class="nav-text">List</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ArrayList"><span class="nav-number">1.1.</span> <span class="nav-text">ArrayList</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LinkedList"><span class="nav-number">1.2.</span> <span class="nav-text">LinkedList</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Map"><span class="nav-number">2.</span> <span class="nav-text">Map</span></a></li></ol></div>
             
 
           </div>
