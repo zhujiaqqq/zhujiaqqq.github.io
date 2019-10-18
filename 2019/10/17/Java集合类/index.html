@@ -79,18 +79,19 @@
 
 
 
-<meta name="description" content="Java的集合主要分为三大块：  List Map Set   List常用的List类有：ArrayList、LinkedList List接口需要实现一下方法：  ArrayList ArrayList的默认容量为10  每次扩容会变为之前的1.5倍  ArrayList中的数据减少时，容量不会减少  ArrayList存储元素使用数组： transient Object[] elementD">
+<meta name="description" content="Java的集合主要分为三大块：List、Map、Set List常用的List类有：ArrayList、LinkedList List接口需要实现一下方法：  ArrayList ArrayList的默认容量为10  每次扩容会变为之前的1.5倍  ArrayList中的数据减少时，容量不会减少  ArrayList存储元素使用数组： transient Object[] elementData;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java集合类">
 <meta property="og:url" content="http://yoursite.com/2019/10/17/Java集合类/index.html">
 <meta property="og:site_name" content="Zhujiaqqq Blog">
-<meta property="og:description" content="Java的集合主要分为三大块：  List Map Set   List常用的List类有：ArrayList、LinkedList List接口需要实现一下方法：  ArrayList ArrayList的默认容量为10  每次扩容会变为之前的1.5倍  ArrayList中的数据减少时，容量不会减少  ArrayList存储元素使用数组： transient Object[] elementD">
+<meta property="og:description" content="Java的集合主要分为三大块：List、Map、Set List常用的List类有：ArrayList、LinkedList List接口需要实现一下方法：  ArrayList ArrayList的默认容量为10  每次扩容会变为之前的1.5倍  ArrayList中的数据减少时，容量不会减少  ArrayList存储元素使用数组： transient Object[] elementData;">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://raw.githubusercontent.com/zhujiaqqq/daily-pic/master/img/20191017191101.png">
-<meta property="og:updated_time" content="2019-10-17T12:24:03.839Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/zhujiaqqq/daily-pic/master/img/20191017203309.png">
+<meta property="og:updated_time" content="2019-10-18T07:04:24.259Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java集合类">
-<meta name="twitter:description" content="Java的集合主要分为三大块：  List Map Set   List常用的List类有：ArrayList、LinkedList List接口需要实现一下方法：  ArrayList ArrayList的默认容量为10  每次扩容会变为之前的1.5倍  ArrayList中的数据减少时，容量不会减少  ArrayList存储元素使用数组： transient Object[] elementD">
+<meta name="twitter:description" content="Java的集合主要分为三大块：List、Map、Set List常用的List类有：ArrayList、LinkedList List接口需要实现一下方法：  ArrayList ArrayList的默认容量为10  每次扩容会变为之前的1.5倍  ArrayList中的数据减少时，容量不会减少  ArrayList存储元素使用数组： transient Object[] elementData;">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/zhujiaqqq/daily-pic/master/img/20191017191101.png">
 
 
@@ -321,16 +322,10 @@
       
 
       
-        <p>Java的集合主要分为三大块：</p>
-<ul>
-<li>List</li>
-<li>Map</li>
-<li>Set</li>
-</ul>
-<hr>
+        <p>Java的集合主要分为三大块：List、Map、Set</p>
 <h2 id="List"><a href="#List" class="headerlink" title="List"></a>List</h2><p><strong>常用的List类有：ArrayList、LinkedList</strong></p>
 <p>List接口需要实现一下方法：</p>
-<p><img src="https://raw.githubusercontent.com/zhujiaqqq/daily-pic/master/img/20191017191101.png" alt></p>
+<p><img src="https://raw.githubusercontent.com/zhujiaqqq/daily-pic/master/img/20191017191101.png" alt="List接口"></p>
 <h3 id="ArrayList"><a href="#ArrayList" class="headerlink" title="ArrayList"></a>ArrayList</h3><ul>
 <li><p>ArrayList的默认容量为10</p>
 </li>
@@ -365,9 +360,8 @@
 </ul>
 </li>
 <li><p>public boolean retainAll(Collection&lt;?&gt; c)</p>
-<ul>
-<li>public boolean removeAll(Collection&lt;?&gt; c)</li>
-</ul>
+</li>
+<li><p>public boolean removeAll(Collection&lt;?&gt; c)</p>
 </li>
 <li><p>为什么ArrayList中存储元素的数组elementData是被transient的？</p>
 <p><strong>因为ArrayList中的elementData是可以扩容的，但是它的长度可能大于或等于实际元素的个数，如果，在序列化的时候将elementData自动序列化，那么会有多个空元素被序列化到磁盘中，所有源码中使用transient禁止序列化，并且在<code>private void writeObject(java.io.ObjectOutputStream s)</code>中通过size的个数对元素进行序列化</strong></p>
@@ -401,6 +395,30 @@
 <li>ConcurrentHashMap/HashTable</li>
 <li>TreeMap</li>
 </ul>
+<p><img src="https://raw.githubusercontent.com/zhujiaqqq/daily-pic/master/img/20191017203309.png" alt="Map接口"></p>
+<h3 id="HashMap"><a href="#HashMap" class="headerlink" title="HashMap"></a>HashMap</h3><ol>
+<li><p><strong>HashMap的内部结构是数组+链表(jdk1.7)。<em>链表长度大于8时，且扩容达到64长度数组时，链表会转化为红黑树(jdk1.8新增)</em></strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">transient</span> Node&lt;K,V&gt;[] table;<span class="comment">//数组</span></span><br><span class="line"><span class="comment">//链表的结构</span></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Node</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; <span class="keyword">implements</span> <span class="title">Map</span>.<span class="title">Entry</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> hash;</span><br><span class="line">    <span class="keyword">final</span> K key;</span><br><span class="line">    V value;</span><br><span class="line">    Node&lt;K,V&gt; next;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//红黑树结构</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">TreeNode</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; <span class="keyword">extends</span> <span class="title">LinkedHashMap</span>.<span class="title">Entry</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">    TreeNode&lt;K,V&gt; parent;  <span class="comment">// red-black tree links</span></span><br><span class="line">    TreeNode&lt;K,V&gt; left;</span><br><span class="line">    TreeNode&lt;K,V&gt; right;</span><br><span class="line">    TreeNode&lt;K,V&gt; prev;    <span class="comment">// needed to unlink next upon deletion</span></span><br><span class="line">    <span class="keyword">boolean</span> red;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>为什么用数组+链表</strong></p>
+<p>当新插入的元素放入数组中，数组当前位置为空时，直接插入；如何当前位置已经存在元素，则对当前链表进行搜索，找到最后一个链表元素，将新插入的元素放在最后一个链表元素的后面。这样的做法是为了解决Hash冲突的问题。</p>
+</li>
+<li><p><strong>HashMap的hash()如何设计，为什么？</strong></p>
+<p>将Key的hashCode与hashCode的高16位进行异或得到。</p>
+<p>因为在插入数据的时候是通过2的幂次进行散列操作，如果不与高16位进行异或，那么会有更高的hash冲突。</p>
+</li>
+<li><p><strong>hash冲突你还知道哪些解决办法？</strong></p>
+<p>比较出名的有四种(1)开放定址法(2)链地址法(3)再哈希法(4)公共溢出区域法</p>
+</li>
+<li><p><strong>HashMap在什么条件下扩容？</strong></p>
+<p>数组中所有元素大于数组长度*扩容阈值</p>
+</li>
+<li><p><strong>为什么数组长度/扩容的容量为2的幂次？</strong></p>
+<p>为了存取高效、减少碰撞、让数据均匀分布在每个链表中，所以元素对于数组的位置计数使用元素key的hash对数组长度进行取模操作，并使用位移操作进行计算。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hash%length</span><br><span class="line">hash&amp;(length-<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>  当length为2的幂次（$2^n$）时，length的二进制位1000…00，那么length-1位111…11，这样在&amp;hash的时候可以减小碰撞。</p>
 
       
     </div>
@@ -565,7 +583,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#List"><span class="nav-number">1.</span> <span class="nav-text">List</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ArrayList"><span class="nav-number">1.1.</span> <span class="nav-text">ArrayList</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LinkedList"><span class="nav-number">1.2.</span> <span class="nav-text">LinkedList</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Map"><span class="nav-number">2.</span> <span class="nav-text">Map</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#List"><span class="nav-number">1.</span> <span class="nav-text">List</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ArrayList"><span class="nav-number">1.1.</span> <span class="nav-text">ArrayList</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LinkedList"><span class="nav-number">1.2.</span> <span class="nav-text">LinkedList</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Map"><span class="nav-number">2.</span> <span class="nav-text">Map</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HashMap"><span class="nav-number">2.1.</span> <span class="nav-text">HashMap</span></a></li></ol></li></ol></div>
             
 
           </div>
