@@ -252,6 +252,155 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/21/kotlin数组和集合/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zhujiaqqq">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zhujiaqqq Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/10/21/kotlin数组和集合/" itemprop="url">kotlin数组和集合</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-21T11:56:50+08:00">
+                2019-10-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="Kotlin数组"><a href="#Kotlin数组" class="headerlink" title="Kotlin数组"></a>Kotlin数组</h3><p>对于基本类型和String，可以是用xxxArray()创建数组：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> intArray = IntArray(<span class="number">10</span>)</span><br><span class="line"><span class="keyword">val</span> longArray = LongArray(<span class="number">10</span>)</span><br><span class="line"><span class="keyword">val</span> stringArray = StringArray()</span><br></pre></td></tr></table></figure>
+<p>也可以使用arrayOf()、arrayOfNulls()、emptyArray()进行类型推测：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> intArray = arrayOf(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"><span class="keyword">val</span> stringArray = arrayOf(<span class="string">"a"</span>, <span class="string">"b"</span>, <span class="string">"c"</span>)</span><br><span class="line"><span class="keyword">val</span> longArray = arrayOfNulls&lt;<span class="built_in">Long</span>&gt;(<span class="number">10</span>)</span><br><span class="line"><span class="keyword">val</span> emptyArray = emptyArray&lt;String&gt;()</span><br></pre></td></tr></table></figure>
+<p>使用Array(size: Int, init:(Int) -&gt; T)，第二个参数可以通过闭包的形式创建数组对象</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> stringArray = Array(<span class="number">10</span>) &#123;</span><br><span class="line">        it.toString()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> intArray = Array(<span class="number">10</span>) &#123;</span><br><span class="line">        it * it</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> arr = Array(<span class="number">10</span>, arrInit())</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">arrInit</span><span class="params">()</span></span>: (<span class="built_in">Int</span>) -&gt; <span class="built_in">Int</span> = &#123; it * <span class="number">2</span> &#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="Kotlin集合"><a href="#Kotlin集合" class="headerlink" title="Kotlin集合"></a>Kotlin集合</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//不可变</span></span><br><span class="line"><span class="keyword">val</span> <span class="keyword">set</span> = setOf&lt;<span class="built_in">Int</span>&gt;(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line"><span class="comment">//可变</span></span><br><span class="line"><span class="keyword">val</span> mutableSetOf = mutableSetOf&lt;<span class="built_in">Int</span>&gt;(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line"><span class="keyword">val</span> hashSetOf = hashSetOf&lt;<span class="built_in">Int</span>&gt;(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line"><span class="keyword">val</span> linkedSetOf = linkedSetOf&lt;<span class="built_in">Int</span>&gt;(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line"><span class="keyword">val</span> sortedSetOf = sortedSetOf(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line"><span class="keyword">val</span> hashMapOf = hashMapOf&lt;String, <span class="built_in">Int</span>&gt;()</span><br><span class="line"><span class="keyword">val</span> arrayListOf = arrayListOf&lt;<span class="built_in">Int</span>&gt;()</span><br></pre></td></tr></table></figure>
+<p><code>xxxMapOf&lt;T&gt;()</code>等价于Java的<code>new xxxMap&lt;T&gt;()</code>，List和Set也一样。</p>
+<hr>
+<h3 id="集合数组操作类"><a href="#集合数组操作类" class="headerlink" title="集合数组操作类"></a>集合数组操作类</h3><ul>
+<li><p>无元素操作符</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> list = listOf&lt;<span class="built_in">Int</span>&gt;(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>)</span><br><span class="line"><span class="keyword">if</span> (list.contains(<span class="number">1</span>)) &#123;</span><br><span class="line">&#125;</span><br><span class="line">list.first()</span><br><span class="line">list.last()</span><br><span class="line">println(list.indexOf(<span class="number">1</span>))</span><br><span class="line">println(list.elementAt(<span class="number">1</span>))</span><br><span class="line">list.single()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>顺序操作符</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> list = listOf&lt;<span class="built_in">Int</span>&gt;(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>)</span><br><span class="line">list.reversed()</span><br><span class="line">list.sorted()</span><br><span class="line">list.sortedDescending()</span><br><span class="line">list.sortedBy &#123;</span><br><span class="line">    it</span><br><span class="line">&#125;</span><br><span class="line">list.sortedByDescending &#123;</span><br><span class="line">    it</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>映射操作符</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> list = listOf&lt;<span class="built_in">Int</span>&gt;(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>)</span><br><span class="line">list.map &#123;</span><br><span class="line">&#125;</span><br><span class="line">list.flatMap &#123; it -&gt;</span><br><span class="line">    List(it) &#123;</span><br><span class="line">        it * it</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">list.groupBy &#123;</span><br><span class="line">    it</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>过滤操作符</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> list = listOf&lt;<span class="built_in">Int</span>&gt;(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>)</span><br><span class="line"><span class="comment">//    过滤</span></span><br><span class="line">list.filter &#123;</span><br><span class="line">    it%<span class="number">2</span>==<span class="number">0</span></span><br><span class="line">&#125;.forEach &#123;</span><br><span class="line">    println(it)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//获取前三个</span></span><br><span class="line">list.take(<span class="number">3</span>).forEach &#123; println(it) &#125;</span><br><span class="line"><span class="comment">//抛弃前三个</span></span><br><span class="line">list.drop(<span class="number">3</span>).forEach &#123; println(it) &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>生产操作符</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> list = listOf&lt;<span class="built_in">Int</span>&gt;(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>)</span><br><span class="line">list.zip(list).forEach &#123; println(it) &#125;</span><br><span class="line">list.partition &#123;</span><br><span class="line">    it%<span class="number">3</span>==<span class="number">0</span></span><br><span class="line">&#125;.first.forEach &#123; println(it) &#125;</span><br><span class="line">list.plus(<span class="number">100</span>).forEach &#123; print(it) &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>统计操作符</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> list = listOf&lt;<span class="built_in">Int</span>&gt;(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>)</span><br><span class="line"><span class="keyword">if</span> (list.any &#123; it==<span class="number">3</span> &#125;) &#123;</span><br><span class="line">    println(<span class="string">"yes"</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (list.all &#123; it &gt; <span class="number">0</span> &#125;) &#123;</span><br><span class="line">    println(<span class="string">"yes"</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (list.none &#123; it &lt; <span class="number">0</span> &#125;) &#123;</span><br><span class="line">    println(<span class="string">"yes"</span>)</span><br><span class="line">&#125;</span><br><span class="line">list.max()</span><br><span class="line">list.min()</span><br><span class="line">println(list.sum())</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/17/Java集合类/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1875,163 +2024,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/27/Android为什么非UI线程不能更新UI/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Zhujiaqqq">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zhujiaqqq Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/08/27/Android为什么非UI线程不能更新UI/" itemprop="url">Android为什么非UI线程不能更新UI</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-27T15:52:08+08:00">
-                2019-08-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h4 id="UI-线程的什么"><a href="#UI-线程的什么" class="headerlink" title="UI 线程的什么"></a>UI 线程的什么</h4><p>Zygote fork出的线程就是UI线程。</p>
-<p>zygote创建App的过程中调用ActivityThread类的main()方法，main中会自行<code>Looper.loop();</code>。</p>
-<h4 id="主线程如何工作"><a href="#主线程如何工作" class="headerlink" title="主线程如何工作"></a>主线程如何工作</h4><ul>
-<li>handler </li>
-<li>loop </li>
-<li>messageQueue</li>
-</ul>
-<h4 id="如果把UI设计成线程安全的"><a href="#如果把UI设计成线程安全的" class="headerlink" title="如果把UI设计成线程安全的"></a>如果把UI设计成线程安全的</h4><p>那么需要对控件加锁，哪一个线程拿到锁才能设置UI。</p>
-<h4 id="UI为什么不设计成线程安全的"><a href="#UI为什么不设计成线程安全的" class="headerlink" title="UI为什么不设计成线程安全的"></a>UI为什么不设计成线程安全的</h4><ul>
-<li>UI具有可变性，甚至是高频可变性</li>
-<li>UI对响应时间的敏感性要求UI操作必须高效</li>
-<li>UI组件必须批量绘制来保证效率</li>
-</ul>
-<p><em>加锁可以变成线程安全，但是加锁是有性能开销的，会使UI的整体性能下降</em></p>
-<h4 id="非UI线程一定不能更新UI吗"><a href="#非UI线程一定不能更新UI吗" class="headerlink" title="非UI线程一定不能更新UI吗"></a>非UI线程一定不能更新UI吗</h4><p>SurfaceView可以在非UI线程更新UI：</p>
-<p>lockCanvas -&gt; draw -&gt; unLockCanvasAndPost </p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2082,7 +2074,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">38</span>
+                  <span class="site-state-item-count">39</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
