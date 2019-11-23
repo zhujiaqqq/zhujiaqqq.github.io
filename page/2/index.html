@@ -252,6 +252,178 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/03/如何避免OOM产生/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zhujiaqqq">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zhujiaqqq Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/09/03/如何避免OOM产生/" itemprop="url">如何避免OOM产生</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-03T22:36:42+08:00">
+                2019-09-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="OOM的产生"><a href="#OOM的产生" class="headerlink" title="OOM的产生"></a>OOM的产生</h3><ul>
+<li>已使用内存+新申请内存&gt;可分配内存</li>
+<li>OOM几乎覆盖所有的内存区域，通常指堆内存</li>
+<li>Native Heap在物理内存不够时也会抛出OOM</li>
+</ul>
+<h3 id="使用合适的数据结构"><a href="#使用合适的数据结构" class="headerlink" title="使用合适的数据结构"></a>使用合适的数据结构</h3><ul>
+<li>HashMap——大于1000个数、增删频繁</li>
+<li>ArrayMap——key不是整型</li>
+<li>SparseArray——Key是整型（池化技术、内存复用）</li>
+</ul>
+<h3 id="避免使用枚举"><a href="#避免使用枚举" class="headerlink" title="避免使用枚举"></a>避免使用枚举</h3><p>每一个枚举就是一个对象，对象至少占24字节。所以使用静态常量：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Retention</span>(value = RetentionPolicy.SOURCE)</span><br><span class="line"><span class="meta">@IntDef</span>(value = &#123;COMMON, LOAD_MORE, LOAD_REFRESH&#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> LoadType &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> COMMON = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> LOAD_MORE = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> LOAD_REFRESH = <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
+<p>Kotlin 可以使用内联类，编译时转化为int，节省内存。</p>
+<h3 id="Bitmap"><a href="#Bitmap" class="headerlink" title="Bitmap"></a>Bitmap</h3><ul>
+<li><p>尽量根据实际需求选择合适的分辨率</p>
+</li>
+<li><p>不用帧动画，使用代码实现动效</p>
+</li>
+<li><p>使用Bitmap重采用和复用配置</p>
+<h3 id="使用NDK"><a href="#使用NDK" class="headerlink" title="使用NDK"></a>使用NDK</h3></li>
+<li><p>Native Heap没有专门的使用限制</p>
+</li>
+<li>内存大户的核心逻辑主要在Native 层</li>
+</ul>
+<h3 id="内存优化5R法则"><a href="#内存优化5R法则" class="headerlink" title="内存优化5R法则"></a>内存优化5R法则</h3><ul>
+<li>Reduce缩减：降低图片分辨率/重采样/抽稀策略</li>
+<li>Reuse复用：池化策略/避免频繁创建对象，减小GC压力</li>
+<li>Recycle回收：主动销毁、结束，避免内存泄露/生命周期闭环</li>
+<li>Refactor重构：更合适的数据结构/更合理的程序架构</li>
+<li>Revalue重审：谨慎使用Large Heap/多进程/第三方框架</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/01/RxJava中CompositeDisposable注意事项/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1777,176 +1949,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/18/如何做到线程安全/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Zhujiaqqq">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zhujiaqqq Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/08/18/如何做到线程安全/" itemprop="url">如何做到线程安全</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-18T20:19:21+08:00">
-                2019-08-18
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h4 id="什么是线程安全"><a href="#什么是线程安全" class="headerlink" title="什么是线程安全"></a>什么是线程安全</h4><p><strong>可变</strong>资源（内存）线程间<strong>共享</strong></p>
-<h4 id="如何实现线程安全"><a href="#如何实现线程安全" class="headerlink" title="如何实现线程安全"></a>如何实现线程安全</h4><ul>
-<li>不共享资源（ThreadLocal）</li>
-<li>共享不可变资源（可重入函数）</li>
-<li>对于共享可变资源，需要：1、 可见性；2、操作原子性；3、禁止重排序</li>
-</ul>
-<h4 id="ThreadLocal"><a href="#ThreadLocal" class="headerlink" title="ThreadLocal"></a>ThreadLocal</h4><p>ThreadLocal本质上是一个绑定到Thread中的Map（ThreadLocalMap），Map的key为ThreadLocal对象本身，value为需要存入的值。</p>
-<p>ThreadLocal的使用建议：</p>
-<ul>
-<li>声明为全局静态final成员</li>
-<li>避免存储大量数据</li>
-<li>用完后及时移除对象</li>
-</ul>
-<h4 id="禁止重排序"><a href="#禁止重排序" class="headerlink" title="禁止重排序"></a>禁止重排序</h4><ul>
-<li><p>在重排序的情况下，final的成员变量会在构造方法中赋值，而非finial的成员变量可能会在构造方法外才被赋值（所以说final有禁止重排序的功能）。</p>
-</li>
-<li><p>Volatile 让对象保证线程可见，禁止重排序。</p>
-</li>
-</ul>
-<h4 id="保证线程可见性"><a href="#保证线程可见性" class="headerlink" title="保证线程可见性"></a>保证线程可见性</h4><ul>
-<li>final</li>
-<li>volatile</li>
-<li>加锁，当锁释放时会强制将缓存刷新到主内存</li>
-</ul>
-<h4 id="保证原子性"><a href="#保证原子性" class="headerlink" title="保证原子性"></a>保证原子性</h4><ul>
-<li>加锁，保证操作的互斥性</li>
-<li>使用原子数值类型（AtomicInteger, …）</li>
-<li>使用原子属性更新器(AtomicRefrenceFieldUpdater)</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1997,7 +1999,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-count">42</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
